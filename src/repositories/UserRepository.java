@@ -1,6 +1,8 @@
 package repositories;
 
-import interfaces.UserRepositoryInterface;
+import entities.User;
+import repositories.Repository;
 
-public class UserRepository implements UserRepositoryInterface {
+public interface UserRepository extends Repository<User> {
+
 }
