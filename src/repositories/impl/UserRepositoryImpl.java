@@ -12,7 +12,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void save(User user) {
-        user.setId(idUser++);
+        user.setId(++idUser);
         users.add(user);
     }
 

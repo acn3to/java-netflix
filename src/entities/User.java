@@ -10,8 +10,8 @@ public class User {
     private boolean isAdmin;
 
 
-    public User(int id, String name, String email, String password, boolean isAdmin) {
-        this.id = id;
+    public User( String name, String email, String password, boolean isAdmin) {
+        //this.id = id; Removendo id, já que o método save de UserRepositoryImpl irá criar o id automaticamente
         this.name = name;
         this.email = email;
         this.password = password;
@@ -85,9 +85,9 @@ public class User {
     @Override
     public String toString() {
         return
-                "ID: " + id +
-                "\nName: " + name + '\'' +
-                "\nE-mail: " + email +
-                "\nIs an administrator:" + isAdmin;
+                "\nID: " + getId() +
+                "\nName: " + getName() +
+                "\nE-mail: " + getEmail() +
+                "\nIs an administrator: " + isAdmin();
     }
 }
