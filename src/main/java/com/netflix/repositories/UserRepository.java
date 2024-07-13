@@ -1,6 +1,6 @@
-package main.java.com.netflix.repositories;
+package com.netflix.repositories;
 
-import main.java.com.netflix.entities.User;
+import com.netflix.entities.User;
 
 public interface UserRepository extends Repository<User> {
 

@@ -1,4 +1,4 @@
-package main.java.com.netflix.entities;
+package com.netflix.entities;
 
 public enum Category {
     ADVENTURE,

@@ -1,6 +1,6 @@
-package main.java.com.netflix.services;
+package com.netflix.services;
 
-import main.java.com.netflix.entities.User;
+import com.netflix.entities.User;
 
 import java.util.List;
 

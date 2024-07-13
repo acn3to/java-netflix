@@ -1,7 +1,7 @@
-package main.java.com.netflix.repositories.impl;
+package com.netflix.repositories.impl;
 
-import main.java.com.netflix.entities.User;
-import main.java.com.netflix.repositories.UserRepository;
+import com.netflix.entities.User;
+import com.netflix.repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
-package main.java.com.netflix.repositories;
+package com.netflix.repositories;
 
-import main.java.com.netflix.entities.Media;
+import com.netflix.entities.Media;
 
 public interface MediaRepository extends Repository<Media> {
 
