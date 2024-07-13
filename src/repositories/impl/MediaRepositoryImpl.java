@@ -19,7 +19,7 @@ public class MediaRepositoryImpl implements MediaRepository {
     @Override
     public Media findById(Long id) {
         return medias.stream()
-                .filter(media -> media.getId().equals(id))
+                .filter(user -> user.getId() == id)
                 .findFirst()
                 .orElse(null);
     }
@@ -36,6 +36,6 @@ public class MediaRepositoryImpl implements MediaRepository {
 
     @Override
     public void delete(Long id) {
-        medias.removeIf(media -> media.getId().equals(id));
+        medias.removeIf(media -> media.getId() == id);
     }
 }

@@ -7,26 +7,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepositoryImpl implements UserRepository {
-    private List<User> userList = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
     private int idUser = 0;
 
     @Override
     public void save(User user) {
         user.setId(idUser++);
-        userList.add(user);
+        users.add(user);
     }
 
     @Override
     public User findById(Long id) {
-        return userList.stream()
-                .filter(user -> user.getId().equals(id))
+        return users.stream()
+                .filter(user -> user.getId() == id)
                 .findFirst()
                 .orElse(null);
     }
 
     @Override
     public List<User> findAll() {
-        return userList;
+        return users;
     }
 
     @Override
@@ -35,6 +35,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void delete(Long id) {
-        userList.removeIf(user -> user.getId().equals(id));
+        users.removeIf(user -> user.getId() == id);
     }
 }
