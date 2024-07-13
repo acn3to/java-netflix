@@ -1,7 +1,7 @@
-package repositories.impl;
+package main.java.com.netflix.repositories.impl;
 
-import entities.Media;
-import repositories.MediaRepository;
+import main.java.com.netflix.entities.Media;
+import main.java.com.netflix.repositories.MediaRepository;
 
 import java.util.ArrayList;
 import java.util.List;

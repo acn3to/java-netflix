@@ -1,4 +1,4 @@
-package repositories;
+package main.java.com.netflix.repositories;
 
 import java.util.List;
 

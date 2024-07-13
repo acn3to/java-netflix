@@ -1,4 +1,4 @@
-package entities;
+package main.java.com.netflix.entities;
 
 import java.time.LocalDate;
 

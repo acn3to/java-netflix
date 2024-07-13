@@ -1,10 +1,8 @@
-package services;
+package main.java.com.netflix.services;
 
-import entities.Category;
-import entities.Media;
-import repositories.MediaRepository;
+import main.java.com.netflix.entities.Media;
+import main.java.com.netflix.repositories.MediaRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MediaService {

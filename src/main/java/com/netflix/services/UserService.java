@@ -1,9 +1,8 @@
-package services;
+package main.java.com.netflix.services;
 
-import entities.User;
-import repositories.UserRepository;
+import main.java.com.netflix.entities.User;
+import main.java.com.netflix.repositories.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserService {
