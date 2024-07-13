@@ -4,7 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0373a71c-9d81-4fd4-9048-dcebb1c55143" name="Changes" comment="feat: added the first interactions with user via console: login and user creation" />
+    <list default="true" id="0373a71c-9d81-4fd4-9048-dcebb1c55143" name="Changes" comment="feat: added the first interactions with user via console: login and user creation">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/entities/Category.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/entities/Category.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/entities/Media.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/entities/Media.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/entities/Movie.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/entities/Movie.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/entities/TvShow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/entities/TvShow.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/entities/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/entities/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/MediaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/MediaRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/impl/MediaRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/impl/MediaRepositoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/services/LoginService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/services/LoginService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/services/MediaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/services/MediaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/utils/ConsoleMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/utils/ConsoleMessage.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,7 +33,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/console-interactions" />
+        <entry key="$PROJECT_DIR$" value="feature/add-utils-folder" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -34,12 +47,12 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
-                    <option name="branchName" value="feature/add-utils-folder" />
-                    <option name="lastUsedInstant" value="1720903891" />
+                    <option name="branchName" value="feature/console-interactions" />
+                    <option name="lastUsedInstant" value="1720903954" />
                   </RecentBranch>
                   <RecentBranch>
-                    <option name="branchName" value="feature/console-interactions" />
-                    <option name="lastUsedInstant" value="1720891838" />
+                    <option name="branchName" value="feature/add-utils-folder" />
+                    <option name="lastUsedInstant" value="1720903891" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="feature/add-maven" />
@@ -79,7 +92,7 @@
     "Application.Netflix.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "feature/add-utils-folder",
+    "git-widget-placeholder": "feature/console-interactions",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/letic/codeProjects/estudos/T-Academy/java-netflix/src",
     "settings.editor.selected.configurable": "preferences.pluginManager"

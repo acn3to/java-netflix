@@ -1,6 +1,8 @@
 package com.netflix.repositories.impl;
 
 import com.netflix.entities.Media;
+import com.netflix.entities.Movie;
+import com.netflix.entities.TvShow;
 import com.netflix.repositories.MediaRepository;
 
 import java.util.ArrayList;
@@ -8,7 +10,7 @@ import java.util.List;
 
 public class MediaRepositoryImpl implements MediaRepository {
     private List<Media> medias = new ArrayList<>();
-    private int idMedia = 0;
+    private int idMedia = 1;
 
     @Override
     public void save(Media media) {
@@ -37,5 +39,19 @@ public class MediaRepositoryImpl implements MediaRepository {
     @Override
     public void delete(Long id) {
         medias.removeIf(media -> media.getId() == id);
+    }
+
+    @Override
+    public List<Media> findAllMovies() {
+        return this.medias.stream()
+                .filter(media -> media instanceof Movie)
+                .toList();
+    }
+
+    @Override
+    public List<Media> findAllTvShows() {
+        return this.medias.stream()
+                .filter(media -> media instanceof TvShow)
+                .toList();
     }
 }

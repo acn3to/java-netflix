@@ -7,13 +7,14 @@ public class Movie extends Media {
 
     public Movie() {}
 
-    public Movie(int durationInMinutes) {
+    public Movie(String title, String description, String director, LocalDate releaseDate, Category category, double rating, int durationInMinutes) {
+        super(title, description, director, releaseDate, category, rating);
         this.durationInMinutes = durationInMinutes;
     }
 
-    public Movie(int id, String title, String description, String director, LocalDate releaseDate, Category category, double rating, int durationInMinutes) {
-        super(id, title, description, director, releaseDate, category, rating);
-        this.durationInMinutes = durationInMinutes;
+    @Override
+    public String getInformation() {
+        return super.getInformation() + "\nDuração: " + this.getDurationInMinutes() + "min";
     }
 
     public int getDurationInMinutes() {

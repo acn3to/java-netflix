@@ -33,7 +33,6 @@ public class LoginService {
 
     public void logout() {
         loggedInUser = null;
-        System.out.println("Logged out successfully.");
     }
 
     public User getLoggedInUser() {

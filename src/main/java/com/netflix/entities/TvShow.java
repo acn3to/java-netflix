@@ -12,12 +12,8 @@ public class TvShow extends Media {
         this.seasons = new HashMap<Integer, List<String>>();
     }
 
-    public TvShow(Map<Integer, List<String>> seasons) {
-        this.seasons = seasons;
-    }
-
-    public TvShow(int id, String title, String description, String director, LocalDate releaseDate, Category category, double rating, Map<Integer, List<String>> seasons) {
-        super(id, title, description, director, releaseDate, category, rating);
+    public TvShow(String title, String description, String director, LocalDate releaseDate, Category category, double rating, Map<Integer, List<String>> seasons) {
+        super(title, description, director, releaseDate, category, rating);
         this.seasons = seasons;
     }
 

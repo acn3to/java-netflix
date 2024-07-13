@@ -24,6 +24,14 @@ public class MediaService {
         return mediaRepository.findAll();
     }
 
+    public List<Media> getAllMovies() {
+        return mediaRepository.findAllMovies();
+    }
+
+    public List<Media> getAllTvShows() {
+        return mediaRepository.findAllTvShows();
+    }
+
     public void updateMedia(Media media) {
         mediaRepository.update(media);
     }
