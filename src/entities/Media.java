@@ -1,6 +1,7 @@
 package entities;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public abstract class Media {
     private int id;
@@ -21,6 +22,20 @@ public abstract class Media {
         this.releaseDate = releaseDate;
         this.category = category;
         this.rating = rating;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Media media = (Media) o;
+
+        return id == media.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
     public int getId() {
