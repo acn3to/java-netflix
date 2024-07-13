@@ -1,37 +1,43 @@
 package services;
 
 import entities.User;
+import repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserService {
-    private List usersList = new ArrayList();
+    private UserRepository userRepository;
 
-    public void registerUser(User user) {
-        usersList.add(user);
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public void removeUser(User user) {
-        usersList.remove(user);
+    public void addUser(User user) {
+        userRepository.save(user);
     }
 
-    public void findUsersById(int id) {
-        for (User user : usersList) {
-            if (user.getId() == id) {
-                System.out.println(user);
-            }
-        }
-    }
-    public UserService(List usersList) {
-        this.usersList = usersList;
+    public User getUserById(Long id) {
+        return userRepository.findById(id);
     }
 
-    public List getUsersList() {
-        return usersList;
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
-    public void setUsersList(List usersList) {
-        this.usersList = usersList;
+    public void updateUser(User user) {
+        userRepository.update(user);
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.delete(id);
+    }
+
+    public UserRepository getUserRepository() {
+        return userRepository;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 }
