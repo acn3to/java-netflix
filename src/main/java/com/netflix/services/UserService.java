@@ -12,7 +12,11 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void addUser(User user) {
+    public void addUser(User user) throws Exception {
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            throw new Exception("Este endereço de e-mail já está cadastrado!");
+        }
+
         userRepository.save(user);
     }
 

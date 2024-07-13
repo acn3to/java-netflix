@@ -23,12 +23,12 @@ public class LoginService {
         return false;
     }
 
-    public void login(String email, String password) {
+    public void login(String email, String password) throws Exception {
         if (authenticate(email, password)) {
-            System.out.println("Login successful!");
-        } else {
-            System.out.println("Invalid credentials.");
+            return;
         }
+
+        throw new Exception("Credenciais inválidas.");
     }
 
     public void logout() {

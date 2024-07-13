@@ -53,4 +53,18 @@ public class ConsoleMessage {
     public static void printInvalidOptionMessage() {
         ConsoleMessage.println("Opção inválida! Tente novamente.", Ansi.Color.RED);
     }
+
+    /**
+     * Prints the logo app to the console.
+     */
+    public static void printLogo() {
+        ConsoleMessage.println("\n" +
+                "███    ██ ███████ ████████ ███████ ██      ██ ██   ██ \n" +
+                "████   ██ ██         ██    ██      ██      ██  ██ ██  \n" +
+                "██ ██  ██ █████      ██    █████   ██      ██   ███   \n" +
+                "██  ██ ██ ██         ██    ██      ██      ██  ██ ██  \n" +
+                "██   ████ ███████    ██    ██      ███████ ██ ██   ██ \n",
+                Ansi.Color.RED
+        );
+    }
 }

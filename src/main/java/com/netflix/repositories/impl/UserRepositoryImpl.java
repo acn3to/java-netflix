@@ -37,4 +37,12 @@ public class UserRepositoryImpl implements UserRepository {
     public void delete(Long id) {
         users.removeIf(user -> user.getId() == id);
     }
+
+    @Override
+    public User findByEmail(String email) {
+        return users.stream()
+                .filter(user -> user.getEmail().equals(email))
+                .findFirst()
+                .orElse(null);
+    }
 }
