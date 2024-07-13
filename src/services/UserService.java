@@ -40,10 +40,4 @@ public class UserService {
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-    public void findAllUsers() {
-        List<User> users = userRepository.findAll();
-        for (User user : users) {
-            System.out.println(user);
-        }
-    }
 }
