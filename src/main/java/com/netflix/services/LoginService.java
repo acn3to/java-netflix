@@ -1,6 +1,6 @@
-package services;
+package com.netflix.services;
 
-import entities.User;
+import com.netflix.entities.User;
 
 import java.util.List;
 
@@ -23,17 +23,16 @@ public class LoginService {
         return false;
     }
 
-    public void login(String email, String password) {
+    public void login(String email, String password) throws Exception {
         if (authenticate(email, password)) {
-            System.out.println("Login successful!");
-        } else {
-            System.out.println("Invalid credentials.");
+            return;
         }
+
+        throw new Exception("Credenciais inválidas.");
     }
 
     public void logout() {
         loggedInUser = null;
-        System.out.println("Logged out successfully.");
     }
 
     public User getLoggedInUser() {

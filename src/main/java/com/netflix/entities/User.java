@@ -1,4 +1,4 @@
-package entities;
+package com.netflix.entities;
 
 import java.util.Objects;
 
@@ -9,7 +9,6 @@ public class User {
     private String password;
     private boolean isAdmin;
 
-
     public User(int id, String name, String email, String password, boolean isAdmin) {
         this.id = id;
         this.name = name;
@@ -18,20 +17,12 @@ public class User {
         this.isAdmin = isAdmin;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-
-        return id == user.id;
+    public User(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.isAdmin = false;
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
-
 
     public int getId() {
         return id;

@@ -1,10 +1,8 @@
-package services;
+package com.netflix.services;
 
-import entities.Category;
-import entities.Media;
-import repositories.MediaRepository;
+import com.netflix.entities.Media;
+import com.netflix.repositories.MediaRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MediaService {
@@ -18,7 +16,7 @@ public class MediaService {
         mediaRepository.save(media);
     }
 
-    public Media getMediaById(Long id) {
+    public Media getMediaById(int id) {
         return mediaRepository.findById(id);
     }
 
@@ -26,11 +24,19 @@ public class MediaService {
         return mediaRepository.findAll();
     }
 
-    public void updateMedia(Media media) {
+    public List<Media> getAllMovies() {
+        return mediaRepository.findAllMovies();
+    }
+
+    public List<Media> getAllTvShows() {
+        return mediaRepository.findAllTvShows();
+    }
+
+    public void updateMedia(Media media) throws Exception {
         mediaRepository.update(media);
     }
 
-    public void deleteMedia(Long id) {
+    public void deleteMedia(int id) throws Exception {
         mediaRepository.delete(id);
     }
 

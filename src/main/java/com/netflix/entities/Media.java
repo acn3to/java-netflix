@@ -1,7 +1,7 @@
-package entities;
+package com.netflix.entities;
 
 import java.time.LocalDate;
-import java.util.Objects;
+import java.time.format.DateTimeFormatter;
 
 public abstract class Media {
     private int id;
@@ -12,7 +12,8 @@ public abstract class Media {
     private Category category;
     private double rating;
 
-    public Media() {}
+    public Media() {
+    }
 
     public Media(int id, String title, String description, String director, LocalDate releaseDate, Category category, double rating) {
         this.id = id;
@@ -24,18 +25,22 @@ public abstract class Media {
         this.rating = rating;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Media media = (Media) o;
-
-        return id == media.id;
+    public Media(String title, String description, String director, LocalDate releaseDate, Category category, double rating) {
+        this.title = title;
+        this.description = description;
+        this.director = director;
+        this.releaseDate = releaseDate;
+        this.category = category;
+        this.rating = rating;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
+    public String getInformation() {
+        return "--------- " + this.getTitle() + " ---------" +
+                "\n\"" + this.getDescription() + "\"" +
+                "\nCategoria: " + this.getCategory().getDescription() +
+                "\nDiretor: " + this.getDirector() +
+                "\nAvaliação: ⭐ " + this.getRating() +
+                "\nData de lançamento: " + this.getFormattedReleaseDate();
     }
 
     public int getId() {
@@ -72,6 +77,11 @@ public abstract class Media {
 
     public LocalDate getReleaseDate() {
         return releaseDate;
+    }
+
+    public String getFormattedReleaseDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return this.getReleaseDate().format(formatter);
     }
 
     public void setReleaseDate(LocalDate releaseDate) {

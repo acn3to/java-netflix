@@ -1,7 +1,7 @@
-package repositories.impl;
+package com.netflix.repositories.impl;
 
-import entities.User;
-import repositories.UserRepository;
+import com.netflix.entities.User;
+import com.netflix.repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findById(Long id) {
+    public User findById(int id) {
         return users.stream()
                 .filter(user -> user.getId() == id)
                 .findFirst()
@@ -34,7 +34,15 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(int id) {
         users.removeIf(user -> user.getId() == id);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return users.stream()
+                .filter(user -> user.getEmail().equals(email))
+                .findFirst()
+                .orElse(null);
     }
 }
