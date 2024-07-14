@@ -27,6 +27,12 @@ public class NexflixApp {
         this.mediaService = mediaService;
     }
 
+    /**
+     * Runs the main application loop.<p>
+     * Displays the login menu options and performs the selected action.
+     * If no user is logged in, it prints the welcome message and logo.
+     * The loop continues until the user chooses to exit.
+     */
     public void run() {
         while (true) {
             if (loginService.getLoggedInUser() == null) {
@@ -52,6 +58,11 @@ public class NexflixApp {
         }
     }
 
+    /**
+     * Handles the login process.<p>
+     * If successful, it displays the logged-in user information and menu options.
+     * If an error occurs, it prints the error message.
+     */
     private void performLogin() {
         ConsoleMessage.println("--------------------\nLogin\n--------------------");
 
@@ -68,6 +79,11 @@ public class NexflixApp {
         }
     }
 
+    /**
+     * Handles the user registration process.<p>
+     * If successful, it prints a success message and proceeds to log the user in.
+     * If an error occurs, it prints the error message.
+     */
     private void performUserRegistration() {
         ConsoleMessage.println("------------------------\nCadastrar novo usuário\n------------------------");
 
@@ -85,6 +101,11 @@ public class NexflixApp {
         }
     }
 
+    /**
+     * Displays the main menu options for the logged-in user.<p>
+     * If the user is an admin, additional admin options are shown.
+     * The loop continues until the user logs out or selects an invalid option.
+     */
     private void displayMenuOptions() {
         boolean showAdminOptions = loginService.getLoggedInUser().isAdmin();
 
@@ -129,6 +150,12 @@ public class NexflixApp {
         }
     }
 
+    /**
+     * Displays the list of movies and provides options to the user.<p>
+     * Options include selecting a movie to view its details or exiting the list.
+     * If no movies are available, a message is displayed and the method returns.
+     * The loop continues until the user chooses to exit.
+     */
     private void displayMovieListOptions() {
         List<Media> movies = mediaService.getAllMovies();
 
@@ -161,6 +188,12 @@ public class NexflixApp {
         }
     }
 
+    /**
+     * Displays the list of tv shows and provides options to the user.<p>
+     * Options include selecting a tv show to view its details or exiting the list.
+     * If no tv shows are available, a message is displayed and the method returns.
+     * The loop continues until the user chooses to exit.
+     */
     private void displayTvShowListOptions() {
         List<Media> tvShows = mediaService.getAllTvShows();
 
@@ -193,6 +226,19 @@ public class NexflixApp {
         }
     }
 
+    /**
+     * Displays the details of a selected media item and provides further options.
+     * The media information is displayed, and the user is prompted to choose an option.
+     * <p>
+     * Options include:<p>
+     * 1. Displaying watching options for a movie or displaying season options for a TV show.<p>
+     * 2. Returning to the previous menu.
+     * <p>
+     * The loop continues until the user selects a valid option.
+     * <p>
+     *
+     * @param media The selected media item (Movie or TvShow).
+     */
     private void displayMediaOptions(Media media) {
         ConsoleMessage.println(media.getInformation());
 
@@ -212,6 +258,17 @@ public class NexflixApp {
         }
     }
 
+    /**
+     * Displays the options for selecting a season and episode of a TV show. <p>
+     * Allows the user to choose a season from the available seasons of the TV show.
+     * Once a season is chosen, displays the episodes of that season and prompts the user to choose an episode.
+     * <p>
+     * After selecting an episode, displays the watching options.
+     * <p>
+     * The method loops until the user selects valid options for both season and episode.
+     *
+     * @param tvShow The TV show for which to display seasons and episodes.
+     */
     private void displayTvShowSeasonsOptions(TvShow tvShow) {
         List<String> episodeList = new ArrayList<>();
         boolean selectingSeason = true;
@@ -248,6 +305,16 @@ public class NexflixApp {
         }
     }
 
+    /**
+     * Displays options for watching a media item, such as a movie or TV show.
+     * Allows the user to toggle between playing and pausing the media.
+     * <p>
+     * The method loops indefinitely until the user chooses to exit.
+     * <p>
+     * Options include: <p>
+     * 1. Toggle between play and pause.<p>
+     * 2. Return to the previous menu.
+     */
     private void displayWatchingOptions() {
         boolean isPaused = false;
 
@@ -274,6 +341,13 @@ public class NexflixApp {
     private void displayMovieCrudOptions() {
     }
 
+    /**
+     * Displays a list of media items in a formatted ASCII table.
+     * The list is divided into rows of up to three media items per row.
+     * Each row displays the ID and title of the media items.
+     *
+     * @param mediaList The list of media items to display.
+     */
     private void showMediaList(List<Media> mediaList) {
         AsciiTable table = new AsciiTable();
         table.addRule();
@@ -291,6 +365,9 @@ public class NexflixApp {
         ConsoleMessage.println(table.render());
     }
 
+    /**
+     * Displays the information of the currently logged-in user in an ASCII table format.
+     */
     private void showLoggedUserInformation() {
         AsciiTable asciiTable = new AsciiTable();
 
@@ -306,12 +383,18 @@ public class NexflixApp {
         ConsoleMessage.println(asciiTable.render(), Ansi.Color.GREEN);
     }
 
+    /**
+     * @return A formatted string of login menu options.
+     */
     private String getLoginMenuOptions() {
         return "[1] Login\n" +
                 "[2] Cadastrar novo usuário\n" +
                 "[3] Sair";
     }
 
+    /**
+     * @return A formatted string of main menu options based on the user's role
+     */
     private String getMenuOptions() {
         var defaultOptions = "[1] Visualizar catálogo de filmes\n" +
                 "[2] Visualizar catálogo de séries\n";
@@ -325,14 +408,27 @@ public class NexflixApp {
         return defaultOptions + (loginService.getLoggedInUser().isAdmin() ? "[5] Logout" : "[3] Logout");
     }
 
+    /**
+     * @return A formatted string of options for interacting with a media item.
+     */
     private String getMediaOptions() {
         return "\n[1] Assistir\n[2] Voltar";
     }
 
+    /**
+     * @return A formatted string of options for selecting an item from a media list.
+     */
     private String getMediaListOptions() {
         return "[1] Escolher\n[2] Voltar";
     }
 
+    /**
+     * Returns a formatted string of options for watching a media item.
+     * Includes options to pause or resume watching and to exit.
+     *
+     * @param isPaused Indicates if the media is currently paused.
+     * @return Formatted string of media watching options.
+     */
     private String getMediaWatchingOptions(boolean isPaused) {
         return "[1] " + (isPaused ? "Despausar" : "Pausar") + "\n[2] Sair";
     }
