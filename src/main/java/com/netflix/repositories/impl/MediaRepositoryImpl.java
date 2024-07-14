@@ -19,7 +19,7 @@ public class MediaRepositoryImpl implements MediaRepository {
     }
 
     @Override
-    public Media findById(Long id) {
+    public Media findById(int id) {
         return medias.stream()
                 .filter(user -> user.getId() == id)
                 .findFirst()
@@ -32,13 +32,26 @@ public class MediaRepositoryImpl implements MediaRepository {
     }
 
     @Override
-    public void update(Media entity) {
+    public void update(Media entity) throws Exception {
+        Media oldMedia = findById(entity.getId());
 
+        if (oldMedia == null) {
+            throw new Exception("Não foi possível encontrar a mídia desejada.");
+        }
+
+        medias.remove(oldMedia);
+        medias.add(entity);
     }
 
     @Override
-    public void delete(Long id) {
-        medias.removeIf(media -> media.getId() == id);
+    public void delete(int id) throws Exception {
+        Media media = findById(id);
+
+        if (media == null) {
+            throw new Exception("Não foi possível encontrar a mídia desejada.");
+        }
+
+        medias.remove(media);
     }
 
     @Override

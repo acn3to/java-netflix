@@ -1,9 +1,6 @@
 package com.netflix;
 
-import com.netflix.entities.Media;
-import com.netflix.entities.Movie;
-import com.netflix.entities.TvShow;
-import com.netflix.entities.User;
+import com.netflix.entities.*;
 import com.netflix.services.LoginService;
 import com.netflix.services.MediaService;
 import com.netflix.services.UserService;
@@ -13,6 +10,7 @@ import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
 import org.fusesource.jansi.Ansi;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -170,7 +168,7 @@ public class NexflixApp {
 
             switch (InputValidator.getInteger(getMediaListOptions())) {
                 case 1:
-                    Media movie = mediaService.getMediaById((long) InputValidator.getInteger("Escolha um filme (número)"));
+                    Media movie = mediaService.getMediaById(InputValidator.getInteger("Escolha um filme (número)"));
 
                     if (movie == null) {
                         ConsoleMessage.printInvalidOptionMessage();
@@ -208,7 +206,7 @@ public class NexflixApp {
 
             switch (InputValidator.getInteger(getMediaListOptions())) {
                 case 1:
-                    Media tvShow = mediaService.getMediaById((long) InputValidator.getInteger("Escolha uma série (número)"));
+                    Media tvShow = mediaService.getMediaById(InputValidator.getInteger("Escolha uma série (número)"));
 
                     if (tvShow == null) {
                         ConsoleMessage.printInvalidOptionMessage();
@@ -336,9 +334,232 @@ public class NexflixApp {
     }
 
     private void displayTvShowCrudOptions() {
+        while (true) {
+            ConsoleMessage.println("Escolha uma opção:");
+            switch (InputValidator.getInteger(getCrudOptions())) {
+                case 1:
+                    handleCreateTvShow();
+                    break;
+                case 2:
+                    handleEditTvShow();
+                    break;
+                case 3:
+                    handleDeleteTvShow();
+                    break;
+                case 4:
+                    return;
+                default:
+                    ConsoleMessage.printInvalidOptionMessage();
+                    break;
+            }
+        }
     }
 
+    /**
+     * Handles the creation of a new TV show.
+     * Prompts the user to input TV show details and saves to the media service.
+     */
+    private void handleCreateTvShow() {
+        TvShow tvShow = new TvShow();
+
+        tvShow.setTitle(InputValidator.getString("Insira o título da série:"));
+        tvShow.setDescription(InputValidator.getString("Insira a descrição da série:"));
+        tvShow.setDirector(InputValidator.getString("Insira o diretor da série:"));
+        tvShow.setReleaseDate(InputValidator.getLocalDate("Insira a data de lançamento da série:"));
+        tvShow.setCategory(InputValidator.getCategory("Insira a categoria da série:"));
+        tvShow.setRating(InputValidator.getDouble("Insira a nota de avaliação da série:"));
+
+        // TODO: creation of seasons
+
+        mediaService.addMedia(tvShow);
+
+        ConsoleMessage.println("Série cadastrada com sucesso!", Ansi.Color.GREEN);
+    }
+
+    /**
+     * Handles the editing of an existing TV show.
+     * Prompts the user to select a TV show from the list and update its details.
+     * Saves the updated TV show to the media service
+     */
+    private void handleEditTvShow() {
+        List<Media> tvShows = mediaService.getAllTvShows();
+
+        if (tvShows.isEmpty()) {
+            ConsoleMessage.println("\nNenhum registro encontrado.\n", Ansi.Color.RED);
+            return;
+        }
+
+        while (true) {
+            ConsoleMessage.println("Séries cadastradas:");
+            showMediaList(tvShows);
+
+            TvShow tvShow = (TvShow) mediaService.getMediaById(InputValidator.getInteger("Escolha a série que deseja editar:"));
+
+            if (tvShow == null) {
+                ConsoleMessage.printInvalidOptionMessage();
+                break;
+            }
+
+            tvShow.setTitle(InputValidator.getString("Insira o novo título da série:"));
+            tvShow.setDescription(InputValidator.getString("Insira a nova descrição da série:"));
+            tvShow.setDirector(InputValidator.getString("Insira o novo diretor da série:"));
+            tvShow.setReleaseDate(InputValidator.getLocalDate("Insira a nova data de lançamento da série:"));
+            tvShow.setCategory(InputValidator.getCategory("Insira a nova categoria da série:"));
+            tvShow.setRating(InputValidator.getDouble("Insira a nova nota de avaliação da série:"));
+
+            // TODO: edit seasons
+
+            try {
+                mediaService.updateMedia(tvShow);
+                ConsoleMessage.println("Série editada com sucesso!", Ansi.Color.GREEN);
+                return;
+            } catch (Exception e) {
+                ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+            }
+        }
+    }
+
+    /**
+     * Handles the deletion of an existing TV show.
+     * Prompts the user to select a TV show from the list and removes it from the media service.
+     */
+    private void handleDeleteTvShow() {
+        List<Media> tvShows = mediaService.getAllTvShows();
+
+        if (tvShows.isEmpty()) {
+            ConsoleMessage.println("\nNenhum registro encontrado.\n", Ansi.Color.RED);
+            return;
+        }
+
+        while (true) {
+            ConsoleMessage.println("Séries cadastradas:");
+            showMediaList(tvShows);
+
+            try {
+                mediaService.deleteMedia(InputValidator.getInteger("Escolha a série que deseja remover:"));
+
+                ConsoleMessage.println("Série removida com sucesso!", Ansi.Color.GREEN);
+                return;
+            } catch (Exception e) {
+                ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+            }
+        }
+    }
+
+    /**
+     * Displays options for managing movies (CRUD operations).
+     */
     private void displayMovieCrudOptions() {
+        while (true) {
+            ConsoleMessage.println("Escolha uma opção:");
+            switch (InputValidator.getInteger(getCrudOptions())) {
+                case 1:
+                    handleCreateMovie();
+                    break;
+                case 2:
+                    handleEditMovie();
+                    break;
+                case 3:
+                    handleDeleteMovie();
+                    break;
+                case 4:
+                    return;
+                default:
+                    ConsoleMessage.printInvalidOptionMessage();
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Handles the creation of a new movie.
+     * Prompts the user to input movie details and saves the new movie to the media service.
+     */
+    private void handleCreateMovie() {
+        Movie movie = new Movie();
+
+        movie.setTitle(InputValidator.getString("Insira o título do filme:"));
+        movie.setDescription(InputValidator.getString("Insira a descrição do filme:"));
+        movie.setDirector(InputValidator.getString("Insira o diretor do filme:"));
+        movie.setReleaseDate(InputValidator.getLocalDate("Insira a data de lançamento do filme:"));
+        movie.setCategory(InputValidator.getCategory("Insira a categoria do filme:"));
+        movie.setRating(InputValidator.getDouble("Insira a nota de avaliação do filme:"));
+        movie.setDurationInMinutes(InputValidator.getInteger("Insira a duração do filme em minutos:"));
+
+        mediaService.addMedia(movie);
+
+        ConsoleMessage.println("Filme cadastrado com sucesso!", Ansi.Color.GREEN);
+    }
+
+    /**
+     * Handles the editing of an existing movie.
+     * Prompts the user to select a movie from the list and update its details.
+     * Saves the updated movie to the media service.
+     */
+    private void handleEditMovie() {
+        List<Media> movies = mediaService.getAllMovies();
+
+        if (movies.isEmpty()) {
+            ConsoleMessage.println("\nNenhum registro encontrado.\n", Ansi.Color.RED);
+            return;
+        }
+
+        while (true) {
+            ConsoleMessage.println("Filmes cadastrados:");
+            showMediaList(movies);
+
+            int movieId = InputValidator.getInteger("Escolha o filme que deseja editar:");
+
+            Movie movie = (Movie) mediaService.getMediaById(movieId);
+
+            if (movie == null) {
+                ConsoleMessage.printInvalidOptionMessage();
+                break;
+            }
+
+            movie.setTitle(InputValidator.getString("Insira o novo título do filme:"));
+            movie.setDescription(InputValidator.getString("Insira a nova descrição do filme:"));
+            movie.setDirector(InputValidator.getString("Insira o novo diretor do filme:"));
+            movie.setReleaseDate(InputValidator.getLocalDate("Insira a nova data de lançamento do filme:"));
+            movie.setCategory(InputValidator.getCategory("Insira a nova categoria do filme:"));
+            movie.setRating(InputValidator.getDouble("Insira a nova nota de avaliação do filme:"));
+            movie.setDurationInMinutes(InputValidator.getInteger("Insira a nova duração do filme em minutos:"));
+
+            try {
+                mediaService.updateMedia(movie);
+                ConsoleMessage.println("Filme editado com sucesso!", Ansi.Color.GREEN);
+                return;
+            } catch (Exception e) {
+                ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+            }
+        }
+    }
+
+    /**
+     * Handles the deletion of an existing movie.
+     * Prompts the user to select a movie from the list and removes it from the media service.
+     */
+    private void handleDeleteMovie() {
+        List<Media> movies = mediaService.getAllMovies();
+
+        if (movies.isEmpty()) {
+            ConsoleMessage.println("\nNenhum registro encontrado.\n", Ansi.Color.RED);
+            return;
+        }
+
+        while (true) {
+            ConsoleMessage.println("Filmes cadastrados:");
+            showMediaList(movies);
+
+            try {
+                mediaService.deleteMedia(InputValidator.getInteger("Escolha o filme que deseja remover:"));
+
+                ConsoleMessage.println("Filme removido com sucesso!", Ansi.Color.GREEN);
+                return;
+            } catch (Exception e) {
+                ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+            }
+        }
     }
 
     /**
@@ -431,5 +652,15 @@ public class NexflixApp {
      */
     private String getMediaWatchingOptions(boolean isPaused) {
         return "[1] " + (isPaused ? "Despausar" : "Pausar") + "\n[2] Sair";
+    }
+
+    /**
+     * @return A formatter string of options for CRUD operations
+     */
+    private String getCrudOptions() {
+        return "[1] Cadastrar" +
+                "\n[2] Editar" +
+                "\n[3] Excluir" +
+                "\n[4] Voltar";
     }
 }

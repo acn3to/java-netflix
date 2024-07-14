@@ -4,9 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0373a71c-9d81-4fd4-9048-dcebb1c55143" name="Changes" comment="feat: made all the basic logic to select and watch movies and series.">
+    <list default="true" id="0373a71c-9d81-4fd4-9048-dcebb1c55143" name="Changes" comment="docs: add documentation to methods from NetflixApp.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/Repository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/Repository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/impl/MediaRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/impl/MediaRepositoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/impl/UserRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/impl/UserRepositoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/services/MediaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/services/MediaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/services/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/services/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/utils/InputValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/utils/InputValidator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -195,7 +201,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720914286210</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="docs: add documentation to methods from NetflixApp.">
+      <option name="closed" value="true" />
+      <created>1720915239452</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1720915239452</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -208,6 +222,7 @@
     <MESSAGE value="feat: added libraries for emitting colors and tables in the console. Also created two helper classes for handling user data via the console." />
     <MESSAGE value="feat: added the first interactions with user via console: login and user creation" />
     <MESSAGE value="feat: made all the basic logic to select and watch movies and series." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: made all the basic logic to select and watch movies and series." />
+    <MESSAGE value="docs: add documentation to methods from NetflixApp." />
+    <option name="LAST_COMMIT_MESSAGE" value="docs: add documentation to methods from NetflixApp." />
   </component>
 </project>

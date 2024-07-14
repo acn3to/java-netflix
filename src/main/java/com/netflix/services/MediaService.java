@@ -16,7 +16,7 @@ public class MediaService {
         mediaRepository.save(media);
     }
 
-    public Media getMediaById(Long id) {
+    public Media getMediaById(int id) {
         return mediaRepository.findById(id);
     }
 
@@ -32,11 +32,11 @@ public class MediaService {
         return mediaRepository.findAllTvShows();
     }
 
-    public void updateMedia(Media media) {
+    public void updateMedia(Media media) throws Exception {
         mediaRepository.update(media);
     }
 
-    public void deleteMedia(Long id) {
+    public void deleteMedia(int id) throws Exception {
         mediaRepository.delete(id);
     }
 

@@ -17,7 +17,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findById(Long id) {
+    public User findById(int id) {
         return users.stream()
                 .filter(user -> user.getId() == id)
                 .findFirst()
@@ -34,7 +34,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(int id) {
         users.removeIf(user -> user.getId() == id);
     }
 

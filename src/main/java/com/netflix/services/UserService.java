@@ -20,7 +20,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public User getUserById(Long id) {
+    public User getUserById(int id) {
         return userRepository.findById(id);
     }
 
@@ -28,11 +28,11 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void updateUser(User user) {
+    public void updateUser(User user) throws Exception {
         userRepository.update(user);
     }
 
-    public void deleteUser(Long id) {
+    public void deleteUser(int id) throws Exception {
         userRepository.delete(id);
     }
 
