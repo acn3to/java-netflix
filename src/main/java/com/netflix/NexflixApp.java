@@ -412,15 +412,12 @@ public class NexflixApp {
                 applyTitleFilter(mediaList);
                 break;
             case 7:
-                applyReleaseDateFilter(mediaList);
-                break;
-            case 8:
                 applyRatingFilter(mediaList);
                 break;
-            case 9:
+            case 8:
                 applyDirectorFilter(mediaList);
                 break;
-            case 10:
+            case 9:
                 return;
             default:
                 ConsoleMessage.printInvalidOptionMessage();
@@ -556,42 +553,6 @@ public class NexflixApp {
         }
 
         displayMediaListOptions(mediaService.filterByTitle(mediaList, mediaSelecionada.getTitle()));
-    }
-
-
-
-    /**
-     * Applies a filter by release date range to the list of media items.
-     * Prompts the user to input initial and final release dates and filters the list accordingly.
-     * Displays an error message if the input date format is invalid.
-     * Sets the flag {@code hasFilters} to true.
-     *
-     * @param mediaList The list of media items to filter by release date range.
-     */
-    private void applyReleaseDateFilter(List<Media> mediaList) {
-        this.hasFilters = true;
-        boolean keepAsking = true;
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        while (keepAsking) {
-            try {
-                String initialDateInput = InputValidator.getString("Digite a data inicial (DD/MM/AAAA):");
-                String finalDateInput = InputValidator.getString("Digite a data final (DD/MM/AAAA):");
-
-                LocalDate initialDate = LocalDate.parse(initialDateInput, dateFormatter);
-                LocalDate finalDate = LocalDate.parse(finalDateInput, dateFormatter);
-
-                if (finalDate.isBefore(initialDate) || initialDate.isAfter(finalDate)) {
-                    ConsoleMessage.println("Data inicial deve ser menor que a data final!", Ansi.Color.RED);
-                } else {
-                    List<Media> filteredMediaList = mediaService.filterByReleaseDate(mediaList, initialDate, finalDate);
-                    displayMediaListOptions(filteredMediaList);
-                    keepAsking = false;
-                }
-            } catch (DateTimeParseException e) {
-                ConsoleMessage.println("Formato de data inválido! Use o formato DD/MM/AAAA.", Ansi.Color.RED);
-            }
-        }
     }
 
     /**
@@ -989,9 +950,8 @@ public class NexflixApp {
                 "\n[4] Filtrar por ano e avaliação mínima" +
                 "\n[5] Filtrar por Categoria" +
                 "\n[6] Filtrar por Título" +
-                "\n[7] Filtrar por Data de Lançamento" +
-                "\n[8] Filtrar por Avaliação" +
-                "\n[9] Filtrar por Diretor" +
-                "\n[10] Voltar";
+                "\n[7] Filtrar por Avaliação" +
+                "\n[8] Filtrar por Diretor" +
+                "\n[9] Voltar";
     }
 }
