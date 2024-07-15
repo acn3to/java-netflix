@@ -1,9 +1,6 @@
 package com.netflix;
 
-import com.netflix.entities.Media;
-import com.netflix.entities.Movie;
-import com.netflix.entities.TvShow;
-import com.netflix.entities.User;
+import com.netflix.entities.*;
 import com.netflix.services.LoginService;
 import com.netflix.services.MediaService;
 import com.netflix.services.UserService;
@@ -234,6 +231,8 @@ public class NexflixApp {
             clearConsole();
             ConsoleMessage.printTvShowCatalogTitle();
             showMediaList(tvShows);
+        }
+    }
     /**
      * Displays options for interacting with a list of media items.
      * Allows selection of media, filtering, resetting filters, or exiting.
