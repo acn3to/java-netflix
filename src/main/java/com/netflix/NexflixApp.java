@@ -10,7 +10,6 @@ import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
 import org.fusesource.jansi.Ansi;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,12 +24,6 @@ public class NexflixApp {
         this.mediaService = mediaService;
     }
 
-    /**
-     * Runs the main application loop.<p>
-     * Displays the login menu options and performs the selected action.
-     * If no user is logged in, it prints the welcome message and logo.
-     * The loop continues until the user chooses to exit.
-     */
     public void run() {
         while (true) {
             if (loginService.getLoggedInUser() == null) {
@@ -56,11 +49,6 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Handles the login process.<p>
-     * If successful, it displays the logged-in user information and menu options.
-     * If an error occurs, it prints the error message.
-     */
     private void performLogin() {
         ConsoleMessage.println("--------------------\nLogin\n--------------------");
 
@@ -77,11 +65,6 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Handles the user registration process.<p>
-     * If successful, it prints a success message and proceeds to log the user in.
-     * If an error occurs, it prints the error message.
-     */
     private void performUserRegistration() {
         ConsoleMessage.println("------------------------\nCadastrar novo usuário\n------------------------");
 
@@ -99,18 +82,15 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Displays the main menu options for the logged-in user.<p>
-     * If the user is an admin, additional admin options are shown.
-     * The loop continues until the user logs out or selects an invalid option.
-     */
     private void displayMenuOptions() {
         boolean showAdminOptions = loginService.getLoggedInUser().isAdmin();
 
         while (true) {
             ConsoleMessage.println("Navegue pelas opções abaixo:");
 
-            switch (InputValidator.getInteger(getMenuOptions())) {
+            String menuOptions = getMenuOptions();
+
+            switch (InputValidator.getInteger(menuOptions)) {
                 case 1:
                     displayMovieListOptions();
                     break;
@@ -131,12 +111,25 @@ public class NexflixApp {
                         break;
                     }
 
+                    if (loginService.getLoggedInUser() != null) {
+                        displayProfileOptions();
+                        break;
+                    }
+
                     ConsoleMessage.printInvalidOptionMessage();
                     break;
                 case 5:
                     if (showAdminOptions) {
                         loginService.logout();
                         return;
+                    }
+
+                    ConsoleMessage.printInvalidOptionMessage();
+                    break;
+                case 6:
+                    if (loginService.getLoggedInUser() != null && !(showAdminOptions)) {
+                        displayProfileOptions();
+                        break;
                     }
 
                     ConsoleMessage.printInvalidOptionMessage();
@@ -148,12 +141,6 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Displays the list of movies and provides options to the user.<p>
-     * Options include selecting a movie to view its details or exiting the list.
-     * If no movies are available, a message is displayed and the method returns.
-     * The loop continues until the user chooses to exit.
-     */
     private void displayMovieListOptions() {
         List<Media> movies = mediaService.getAllMovies();
 
@@ -186,12 +173,6 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Displays the list of tv shows and provides options to the user.<p>
-     * Options include selecting a tv show to view its details or exiting the list.
-     * If no tv shows are available, a message is displayed and the method returns.
-     * The loop continues until the user chooses to exit.
-     */
     private void displayTvShowListOptions() {
         List<Media> tvShows = mediaService.getAllTvShows();
 
@@ -224,19 +205,6 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Displays the details of a selected media item and provides further options.
-     * The media information is displayed, and the user is prompted to choose an option.
-     * <p>
-     * Options include:<p>
-     * 1. Displaying watching options for a movie or displaying season options for a TV show.<p>
-     * 2. Returning to the previous menu.
-     * <p>
-     * The loop continues until the user selects a valid option.
-     * <p>
-     *
-     * @param media The selected media item (Movie or TvShow).
-     */
     private void displayMediaOptions(Media media) {
         ConsoleMessage.println(media.getInformation());
 
@@ -256,17 +224,6 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Displays the options for selecting a season and episode of a TV show. <p>
-     * Allows the user to choose a season from the available seasons of the TV show.
-     * Once a season is chosen, displays the episodes of that season and prompts the user to choose an episode.
-     * <p>
-     * After selecting an episode, displays the watching options.
-     * <p>
-     * The method loops until the user selects valid options for both season and episode.
-     *
-     * @param tvShow The TV show for which to display seasons and episodes.
-     */
     private void displayTvShowSeasonsOptions(TvShow tvShow) {
         List<String> episodeList = new ArrayList<>();
         boolean selectingSeason = true;
@@ -303,16 +260,6 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Displays options for watching a media item, such as a movie or TV show.
-     * Allows the user to toggle between playing and pausing the media.
-     * <p>
-     * The method loops indefinitely until the user chooses to exit.
-     * <p>
-     * Options include: <p>
-     * 1. Toggle between play and pause.<p>
-     * 2. Return to the previous menu.
-     */
     private void displayWatchingOptions() {
         boolean isPaused = false;
 
@@ -355,10 +302,6 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Handles the creation of a new TV show.
-     * Prompts the user to input TV show details and saves to the media service.
-     */
     private void handleCreateTvShow() {
         TvShow tvShow = new TvShow();
 
@@ -376,11 +319,6 @@ public class NexflixApp {
         ConsoleMessage.println("Série cadastrada com sucesso!", Ansi.Color.GREEN);
     }
 
-    /**
-     * Handles the editing of an existing TV show.
-     * Prompts the user to select a TV show from the list and update its details.
-     * Saves the updated TV show to the media service
-     */
     private void handleEditTvShow() {
         List<Media> tvShows = mediaService.getAllTvShows();
 
@@ -419,10 +357,7 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Handles the deletion of an existing TV show.
-     * Prompts the user to select a TV show from the list and removes it from the media service.
-     */
+
     private void handleDeleteTvShow() {
         List<Media> tvShows = mediaService.getAllTvShows();
 
@@ -446,9 +381,6 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Displays options for managing movies (CRUD operations).
-     */
     private void displayMovieCrudOptions() {
         while (true) {
             ConsoleMessage.println("Escolha uma opção:");
@@ -471,10 +403,6 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Handles the creation of a new movie.
-     * Prompts the user to input movie details and saves the new movie to the media service.
-     */
     private void handleCreateMovie() {
         Movie movie = new Movie();
 
@@ -491,11 +419,6 @@ public class NexflixApp {
         ConsoleMessage.println("Filme cadastrado com sucesso!", Ansi.Color.GREEN);
     }
 
-    /**
-     * Handles the editing of an existing movie.
-     * Prompts the user to select a movie from the list and update its details.
-     * Saves the updated movie to the media service.
-     */
     private void handleEditMovie() {
         List<Media> movies = mediaService.getAllMovies();
 
@@ -535,10 +458,6 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Handles the deletion of an existing movie.
-     * Prompts the user to select a movie from the list and removes it from the media service.
-     */
     private void handleDeleteMovie() {
         List<Media> movies = mediaService.getAllMovies();
 
@@ -562,13 +481,6 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Displays a list of media items in a formatted ASCII table.
-     * The list is divided into rows of up to three media items per row.
-     * Each row displays the ID and title of the media items.
-     *
-     * @param mediaList The list of media items to display.
-     */
     private void showMediaList(List<Media> mediaList) {
         AsciiTable table = new AsciiTable();
         table.addRule();
@@ -586,9 +498,7 @@ public class NexflixApp {
         ConsoleMessage.println(table.render());
     }
 
-    /**
-     * Displays the information of the currently logged-in user in an ASCII table format.
-     */
+
     private void showLoggedUserInformation() {
         AsciiTable asciiTable = new AsciiTable();
 
@@ -604,18 +514,13 @@ public class NexflixApp {
         ConsoleMessage.println(asciiTable.render(), Ansi.Color.GREEN);
     }
 
-    /**
-     * @return A formatted string of login menu options.
-     */
     private String getLoginMenuOptions() {
         return "[1] Login\n" +
                 "[2] Cadastrar novo usuário\n" +
                 "[3] Sair";
     }
 
-    /**
-     * @return A formatted string of main menu options based on the user's role
-     */
+
     private String getMenuOptions() {
         var defaultOptions = "[1] Visualizar catálogo de filmes\n" +
                 "[2] Visualizar catálogo de séries\n";
@@ -623,44 +528,315 @@ public class NexflixApp {
         if (loginService.getLoggedInUser().isAdmin()) {
             defaultOptions = defaultOptions +
                     "[3] Gerenciar filmes\n" +
-                    "[4] Gerenciar séries\n";
+                    "[4] Gerenciar séries\n" +
+                    "[5] Logout";
+        } else {
+            if (loginService.getLoggedInUser() != null && (!loginService.getLoggedInUser().isAdmin())) {
+                defaultOptions += "[6] Gerenciar Perfis";
+            }
+            defaultOptions = defaultOptions + "\n[3] Logout";
         }
 
-        return defaultOptions + (loginService.getLoggedInUser().isAdmin() ? "[5] Logout" : "[3] Logout");
+
+        return defaultOptions;
     }
 
-    /**
-     * @return A formatted string of options for interacting with a media item.
-     */
     private String getMediaOptions() {
         return "\n[1] Assistir\n[2] Voltar";
     }
 
-    /**
-     * @return A formatted string of options for selecting an item from a media list.
-     */
     private String getMediaListOptions() {
         return "[1] Escolher\n[2] Voltar";
     }
 
-    /**
-     * Returns a formatted string of options for watching a media item.
-     * Includes options to pause or resume watching and to exit.
-     *
-     * @param isPaused Indicates if the media is currently paused.
-     * @return Formatted string of media watching options.
-     */
     private String getMediaWatchingOptions(boolean isPaused) {
         return "[1] " + (isPaused ? "Despausar" : "Pausar") + "\n[2] Sair";
     }
 
-    /**
-     * @return A formatter string of options for CRUD operations
-     */
     private String getCrudOptions() {
         return "[1] Cadastrar" +
                 "\n[2] Editar" +
                 "\n[3] Excluir" +
                 "\n[4] Voltar";
+    }
+
+    private void displayProfileOptions() {
+        while (true) {
+            ConsoleMessage.println("Escolha uma opção:");
+            switch (InputValidator.getInteger(getProfileOptions())) {
+                case 1:
+                    createProfile();
+                    break;
+                case 2:
+                    listProfiles();
+                    break;
+                case 3:
+                    selectProfile();
+                    break;
+                case 4:
+                    return;  // Voltar ao menu principal
+                default:
+                    ConsoleMessage.printInvalidOptionMessage();
+                    break;
+            }
+        }
+    }
+
+    private void createProfile() {
+        ConsoleMessage.println("------------------------\nCriar novo perfil\n------------------------");
+
+        try {
+            if (loginService.getLoggedInUser() == null) {
+                ConsoleMessage.printInvalidOptionMessage();
+                return;
+            }
+
+            String name = InputValidator.getString("Digite o nome do perfil:");
+            User user = loginService.getLoggedInUser();
+            int profileId = userService.getNextProfileId(user.getId()); // Obter o próximo ID disponível
+
+            Profile profile = new Profile(profileId, name, user);
+            userService.addProfileToUser(user.getId(), profile);
+
+            ConsoleMessage.println("Perfil criado com sucesso!", Ansi.Color.GREEN);
+        } catch (Exception e) {
+            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+        }
+    }
+
+    private void listProfiles() {
+        ConsoleMessage.println("------------------------\nTodos os Perfis\n------------------------");
+
+        try {
+            if (loginService.getLoggedInUser() == null) {
+                ConsoleMessage.printInvalidOptionMessage();
+                return;
+            }
+
+            User user = loginService.getLoggedInUser();
+            List<Profile> profiles = userService.getProfilesByUserId(user.getId());
+
+            if (profiles.isEmpty()) {
+                ConsoleMessage.println("Nenhum perfil encontrado.", Ansi.Color.RED);
+                return;
+            }
+
+            AsciiTable table = new AsciiTable();
+            table.addRule();
+            table.addRow("ID", "Nome");
+            table.addRule();
+
+            for (Profile profile : profiles) {
+                table.addRow(profile.getId(), profile.getName());
+            }
+
+            table.addRule();
+            table.setTextAlignment(TextAlignment.LEFT);
+            ConsoleMessage.println(table.render());
+        } catch (Exception e) {
+            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+        }
+    }
+
+    private void selectProfile() {
+        try {
+            User user = loginService.getLoggedInUser();
+            if (user == null) {
+                ConsoleMessage.printInvalidOptionMessage();
+                return;
+            }
+
+            List<Profile> profiles = userService.getProfilesByUserId(user.getId());
+
+            if (profiles.isEmpty()) {
+                ConsoleMessage.println("Nenhum perfil encontrado.", Ansi.Color.RED);
+                return;
+            }
+
+            ConsoleMessage.println("Escolha um perfil:");
+            profiles.forEach(profile -> ConsoleMessage.println("[" + profile.getId() + "] " + profile.getName()));
+
+            int profileId = InputValidator.getInteger("Digite o ID do perfil:");
+            Profile profile = userService.getProfileById(user.getId(), profileId);
+
+            if (profile == null) {
+                ConsoleMessage.printInvalidOptionMessage();
+                return;
+            }
+
+            // Exemplo de uma ação a ser feita após selecionar um perfil
+            // Você pode chamar outros métodos aqui ou mostrar um menu específico para o perfil
+            ConsoleMessage.println("Perfil selecionado: " + profile.getName());
+
+            // Exemplo: Mostre opções específicas para o perfil selecionado
+            displayProfileSpecificOptions(profile);
+
+        } catch (Exception e) {
+            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+        }
+    }
+
+
+    private String getProfileOptions() {
+        return "[1] Criar novo perfil\n" +
+                "[2] Listar perfis\n" +
+                "[3] Selecionar perfil\n" +
+                "[4] Voltar";
+    }
+
+//    private void manageMyList() {
+//        try {
+//            User user = loginService.getLoggedInUser();
+//            if (user == null) {
+//                ConsoleMessage.printInvalidOptionMessage();
+//                return;
+//            }
+//
+//            List<Profile> profiles = userService.getProfilesByUserId(user.getId());
+//
+//            if (profiles.isEmpty()) {
+//                ConsoleMessage.println("Nenhum perfil encontrado.", Ansi.Color.RED);
+//                return;
+//            }
+//
+//            ConsoleMessage.println("Escolha um perfil:");
+//            profiles.forEach(profile -> ConsoleMessage.println("[" + profile.getId() + "] " + profile.getName()));
+//
+//            int profileId = InputValidator.getInteger("Digite o ID do perfil:");
+//            Profile profile = userService.getProfileById(user.getId(), profileId);
+//
+//            if (profile == null) {
+//                ConsoleMessage.printInvalidOptionMessage();
+//                return;
+//            }
+//
+//            while (true) {
+//                ConsoleMessage.println("Escolha uma opção:");
+//                switch (InputValidator.getInteger(getMyListOptions())) {
+//                    case 1:
+//                        addMediaToMyList(profile);
+//                        break;
+//                    case 2:
+//                        removeMediaFromMyList(profile);
+//                        break;
+//                    case 3:
+//                        viewMyList(profile);
+//                        break;
+//                    case 4:
+//                        return;  // Corrigido para sair do loop e voltar ao menu principal
+//                    default:
+//                        ConsoleMessage.printInvalidOptionMessage();
+//                        break;
+//                }
+//            }
+//        } catch (Exception e) {
+//            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+//        }
+//    }
+
+    private void addMediaToMyList(Profile profile) {
+        try {
+            List<Media> mediaList = mediaService.getAllMedia();
+            ConsoleMessage.println("Escolha uma mídia para adicionar à lista:");
+
+            for (Media media : mediaList) {
+                ConsoleMessage.println("[" + media.getId() + "] " + media.getTitle());
+            }
+
+            int mediaId = InputValidator.getInteger("Digite o ID da mídia:");
+            Media media = mediaService.getMediaById(mediaId);
+
+            if (media == null) {
+                ConsoleMessage.printInvalidOptionMessage();
+                return;
+            }
+
+            userService.addToProfileMyList(loginService.getLoggedInUser().getId(), profile.getId(), media);
+            ConsoleMessage.println("Mídia adicionada à lista com sucesso!", Ansi.Color.GREEN);
+        } catch (Exception e) {
+            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+        }
+    }
+
+    private void removeMediaFromMyList(Profile profile) {
+        try {
+            List<Media> myList = userService.getProfileMyList(loginService.getLoggedInUser().getId(), profile.getId());
+
+            if (myList.isEmpty()) {
+                ConsoleMessage.println("A lista está vazia.", Ansi.Color.RED);
+                return;
+            }
+
+            ConsoleMessage.println("Escolha uma mídia para remover da lista:");
+
+            for (Media media : myList) {
+                ConsoleMessage.println("[" + media.getId() + "] " + media.getTitle());
+            }
+
+            int mediaId = InputValidator.getInteger("Digite o ID da mídia:");
+            Media media = mediaService.getMediaById(mediaId);
+
+            if (media == null || !myList.contains(media)) {
+                ConsoleMessage.printInvalidOptionMessage();
+                return;
+            }
+
+            userService.removeFromProfileMyList(loginService.getLoggedInUser().getId(), profile.getId(), media);
+            ConsoleMessage.println("Mídia removida da lista com sucesso!", Ansi.Color.GREEN);
+        } catch (Exception e) {
+            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+        }
+    }
+
+    private void viewMyList(Profile profile) {
+        try {
+            List<Media> myList = userService.getProfileMyList(loginService.getLoggedInUser().getId(), profile.getId());
+
+            if (myList.isEmpty()) {
+                ConsoleMessage.println("A lista está vazia.", Ansi.Color.RED);
+                return;
+            }
+
+            ConsoleMessage.println("Sua lista de mídias:");
+            showMediaList(myList);
+        } catch (Exception e) {
+            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+        }
+    }
+
+    private String getMyListOptions() {
+        return "[1] Adicionar mídia à lista\n" +
+                "[2] Remover mídia da lista\n" +
+                "[3] Ver minha lista\n" +
+                "[4] Voltar";
+    }
+
+    private void displayProfileSpecificOptions(Profile profile) {
+        while (true) {
+            ConsoleMessage.println("Escolha uma opção:");
+            // Exemplo de opções
+            ConsoleMessage.println("[1] Adicionar mídia à lista");
+            ConsoleMessage.println("[2] Remover mídia da lista");
+            ConsoleMessage.println("[3] Ver minha lista");
+            ConsoleMessage.println("[4] Voltar ao menu principal");
+
+            int option = InputValidator.getInteger("Digite a opção desejada:");
+            switch (option) {
+                case 1:
+                    addMediaToMyList(profile);
+                    break;
+                case 2:
+                    removeMediaFromMyList(profile);
+                    break;
+                case 3:
+                    viewMyList(profile);
+                    break;
+                case 4:
+                    return;  // Voltar ao menu principal
+                default:
+                    ConsoleMessage.printInvalidOptionMessage();
+                    break;
+            }
+        }
     }
 }

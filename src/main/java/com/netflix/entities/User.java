@@ -1,5 +1,7 @@
 package com.netflix.entities;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class User {
@@ -8,6 +10,7 @@ public class User {
     private String email;
     private String password;
     private boolean isAdmin;
+    private List<Profile> profiles; // ---------------------------------
 
     public User(int id, String name, String email, String password, boolean isAdmin) {
         this.id = id;
@@ -15,6 +18,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.isAdmin = isAdmin;
+        this.profiles = new ArrayList<>();  // ---------------------------------
     }
 
     public User(String name, String email, String password) {
@@ -22,6 +26,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.isAdmin = false;
+        this.profiles = new ArrayList<>();  // ---------------------------------
     }
 
     public int getId() {
@@ -80,5 +85,30 @@ public class User {
                 "\nName: " + name + '\'' +
                 "\nE-mail: " + email +
                 "\nIs an administrator:" + isAdmin;
+    }
+
+    // ---------------------------------
+
+    public List<Profile> getProfiles() {
+        return profiles;
+    }
+
+    public void addProfile(Profile profile) {
+        if (profile != null && !profiles.contains(profile)) {
+            profiles.add(profile);
+        }
+    }
+
+    public void removeProfile(int profileId) {
+        profiles.removeIf(profile -> profile.getId() == profileId);
+    }
+
+    public Profile getProfileById(int id) {
+        for (Profile profile : profiles) {
+            if (profile.getId() == id) {
+                return profile;
+            }
+        }
+        return null;
     }
 }

@@ -5,14 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0373a71c-9d81-4fd4-9048-dcebb1c55143" name="Changes" comment="docs: add documentation to methods from NetflixApp.">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/netflix/entities/Profile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/Repository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/Repository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/impl/MediaRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/impl/MediaRepositoryImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/impl/UserRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/repositories/impl/UserRepositoryImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/services/MediaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/services/MediaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/entities/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/entities/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/services/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/services/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/utils/InputValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/utils/InputValidator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,9 +84,10 @@
   &quot;keyToString&quot;: {
     &quot;Application.Main.executor&quot;: &quot;Run&quot;,
     &quot;Application.Netflix.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/console-interactions&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/letic/codeProjects/estudos/T-Academy/java-netflix/src&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
