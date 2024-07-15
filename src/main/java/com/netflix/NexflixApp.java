@@ -522,7 +522,7 @@ public class NexflixApp {
 
 
     /**
-     * Solicita ao usuário que selecione um título da lista mostrada e filtra a lista de itens de mídia por esse título.
+     * Solicita ao usuário que digite um título e filtra a lista de itens de mídia por esse título.
      * Define a flag {@code hasFilters} como true.
      *
      * @param mediaList A lista de itens de mídia para filtrar por título.
@@ -530,32 +530,16 @@ public class NexflixApp {
     private void applyTitleFilter(List<Media> mediaList) {
         this.hasFilters = true;
 
+        ConsoleMessage.println("Digite o título para filtrar:");
 
-        ConsoleMessage.println("Títulos disponíveis para filtragem:");
-        for (int i = 0; i < mediaList.size(); i++) {
-            ConsoleMessage.println("[" + (i + 1) + "] " + mediaList.get(i).getTitle());
+        String titulo = InputValidator.getString("Título: ");
+        List<Media> mediaFiltrada = mediaService.filterByTitle(mediaList, titulo);
+
+        if (mediaFiltrada.isEmpty()) {
+            ConsoleMessage.println("Nenhum item encontrado com o título especificado.", Ansi.Color.RED);
+        } else {
+            displayMediaListOptions(mediaFiltrada);
         }
-
-        boolean tituloValido = false;
-        Media mediaSelecionada = null;
-
-        while (!tituloValido) {
-            try {
-                String indiceTituloStr = InputValidator.getString("Selecione o título pelo número:");
-                int indiceTitulo = Integer.parseInt(indiceTituloStr);
-
-                if (indiceTitulo >= 1 && indiceTitulo <= mediaList.size()) {
-                    mediaSelecionada = mediaList.get(indiceTitulo - 1);
-                    tituloValido = true;
-                } else {
-                    ConsoleMessage.println("Número de título inválido! Por favor, selecione um número válido.", Ansi.Color.RED);
-                }
-            } catch (NumberFormatException e) {
-                ConsoleMessage.println("Entrada inválida! Por favor, digite um número válido.", Ansi.Color.RED);
-            }
-        }
-
-        displayMediaListOptions(mediaService.filterByTitle(mediaList, mediaSelecionada.getTitle()));
     }
 
 
@@ -617,32 +601,16 @@ public class NexflixApp {
     private void applyDirectorFilter(List<Media> mediaList) {
         this.hasFilters = true;
 
+        ConsoleMessage.println("Digite o nome do diretor para filtrar:");
 
-        ConsoleMessage.println("Diretores disponíveis para filtragem:");
-        for (int i = 0; i < mediaList.size(); i++) {
-            ConsoleMessage.println("[" + (i + 1) + "] " + mediaList.get(i).getDirector());
+        String diretor = InputValidator.getString("Diretor: ");
+        List<Media> mediaFiltrada = mediaService.filterByDirector(mediaList, diretor);
+
+        if (mediaFiltrada.isEmpty()) {
+            ConsoleMessage.println("Nenhum item encontrado com o diretor especificado.", Ansi.Color.RED);
+        } else {
+            displayMediaListOptions(mediaFiltrada);
         }
-
-        boolean diretorValido = false;
-        String diretorSelecionado = null;
-
-        while (!diretorValido) {
-            try {
-                String indiceDiretorStr = InputValidator.getString("Selecione o diretor pelo número:");
-                int indiceDiretor = Integer.parseInt(indiceDiretorStr);
-
-                if (indiceDiretor >= 1 && indiceDiretor <= mediaList.size()) {
-                    diretorSelecionado = mediaList.get(indiceDiretor - 1).getDirector();
-                    diretorValido = true;
-                } else {
-                    ConsoleMessage.println("Número de diretor inválido! Por favor, selecione um número válido.", Ansi.Color.RED);
-                }
-            } catch (NumberFormatException e) {
-                ConsoleMessage.println("Entrada inválida! Por favor, digite um número válido.", Ansi.Color.RED);
-            }
-        }
-
-        displayMediaListOptions(mediaService.filterByDirector(mediaList, diretorSelecionado));
     }
 
 
