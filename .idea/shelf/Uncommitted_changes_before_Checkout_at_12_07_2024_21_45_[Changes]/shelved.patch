@@ -1,0 +1,22 @@
+Index: src/services/UserService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package services;\r\n\r\nimport entities.User;\r\nimport repositories.UserRepository;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class UserService {\r\n    private UserRepository userRepository;\r\n\r\n    public UserService(UserRepository userRepository) {\r\n        this.userRepository = userRepository;\r\n    }\r\n\r\n    public void addUser(User user) {\r\n        userRepository.save(user);\r\n    }\r\n\r\n    public User getUserById(Long id) {\r\n        return userRepository.findById(id);\r\n    }\r\n\r\n    public List<User> getAllUsers() {\r\n        return userRepository.findAll();\r\n    }\r\n\r\n    public void updateUser(User user) {\r\n        userRepository.update(user);\r\n    }\r\n\r\n    public void deleteUser(Long id) {\r\n        userRepository.delete(id);\r\n    }\r\n\r\n    public UserRepository getUserRepository() {\r\n        return userRepository;\r\n    }\r\n\r\n    public void setUserRepository(UserRepository userRepository) {\r\n        this.userRepository = userRepository;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/services/UserService.java b/src/services/UserService.java
+--- a/src/services/UserService.java	(revision aa56aba5404464262cf4e9ab68a6c67faddc0eff)
++++ b/src/services/UserService.java	(date 1720831149326)
+@@ -40,4 +40,11 @@
+     public void setUserRepository(UserRepository userRepository) {
+         this.userRepository = userRepository;
+     }
++
++    public  () {
++        List<User> users = getAllUsers();
++        for (User user : users) {
++            System.out.println(user);
++        }
++    }
+ }
