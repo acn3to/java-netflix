@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="25ee3813-2ba7-4030-b371-6a6b5b2838f5" name="Changes" comment="correção filtro titulo e diretor">
+    <list default="true" id="25ee3813-2ba7-4030-b371-6a6b5b2838f5" name="Changes" comment="feat(entity): add Episode entity">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,27 +70,11 @@
       </RecentBranches>
     </option>
   </component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/acn3to/java-netflix.git",
-    "accountId": "5ce89ae0-3eff-4a5d-ac97-eb535358e192"
-  },
-  "recentNewPullRequestHead": {
-    "server": {
-      "useHttp": false,
-      "host": "github.com",
-      "port": null,
-      "suffix": null
-    },
-    "owner": "acn3to",
-    "repository": "java-netflix"
-  }
-}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
   <component name="ProjectId" id="2jAGjPjHxx7rMv3oPv6ELkOaRlU" />
-  <component name="ProjectLevelVcsManager">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
@@ -105,9 +88,10 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "#20 on feature/Mediafilters",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/letic/codeProjects/estudos/T-Academy/java-netflix/src",
+    "node.js.selected.package.tslint": "(autodetect)",
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
@@ -226,15 +210,7 @@
       <option name="project" value="LOCAL" />
       <updated>1720915239452</updated>
     </task>
-    <task id="LOCAL-00012" summary="correção filtro titulo e diretor">
-      <option name="closed" value="true" />
-      <created>1721082148338</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1721082148338</updated>
-    </task>
-    <option name="localTasksCounter" value="13" />
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -248,7 +224,7 @@
     <MESSAGE value="feat: added the first interactions with user via console: login and user creation" />
     <MESSAGE value="feat: made all the basic logic to select and watch movies and series." />
     <MESSAGE value="docs: add documentation to methods from NetflixApp." />
-    <MESSAGE value="correção filtro titulo e diretor" />
-    <option name="LAST_COMMIT_MESSAGE" value="correção filtro titulo e diretor" />
+    <MESSAGE value="feat(entity): add Episode entity" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(entity): add Episode entity" />
   </component>
 </project>
