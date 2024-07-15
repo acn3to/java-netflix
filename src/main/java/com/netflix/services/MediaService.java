@@ -1,6 +1,9 @@
 package com.netflix.services;
 
+import com.netflix.entities.Category;
 import com.netflix.entities.Media;
+import com.netflix.entities.Movie;
+import com.netflix.entities.TvShow;
 import com.netflix.repositories.MediaRepository;
 
 import java.time.LocalDate;
@@ -66,4 +69,37 @@ public class MediaService {
                 .filter(media -> media.getReleaseDate().getYear() == year && media.getRating() >= minRating)
                 .collect(Collectors.toList());
     }
+
+    public List<Media> filterByCategory(List<Media> mediaList, Category category) {
+        return mediaList.stream()
+                .filter(media -> media.getCategory() == category)
+                .collect(Collectors.toList());
+    }
+
+    public List<Media> filterByTitle(List<Media> mediaList, String title) {
+        return mediaList.stream()
+                .filter(media -> media.getTitle().equalsIgnoreCase(title))
+                .collect(Collectors.toList());
+    }
+
+
+    public List<Media> filterByRating(List<Media> mediaList, double minRating) {
+        return mediaList.stream()
+                .filter(media -> media.getRating() >= minRating)
+                .collect(Collectors.toList());
+    }
+
+    public List<Media> filterByType(List<Media> mediaList, String type) {
+        return mediaList.stream()
+                .filter(media -> (type.equalsIgnoreCase("Movie") && media instanceof Movie) ||
+                        (type.equalsIgnoreCase("TvShow") && media instanceof TvShow))
+                .collect(Collectors.toList());
+    }
+
+    public List<Media> filterByDirector(List<Media> mediaList, String director) {
+        return mediaList.stream()
+                .filter(media -> media.getDirector().equalsIgnoreCase(director))
+                .collect(Collectors.toList());
+    }
+
 }

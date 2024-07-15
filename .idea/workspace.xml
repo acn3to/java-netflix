@@ -5,17 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="25ee3813-2ba7-4030-b371-6a6b5b2838f5" name="Changes" comment="feat: add CRUD operations to the console for Movie and TvShow.">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/git_toolbox_blame.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/git_toolbox_prj.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/services/MediaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/services/MediaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/utils/InputValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/utils/InputValidator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,11 +24,17 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="feature/date-filters" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "isaquebarisch"
+  }
+}]]></component>
   <component name="GitToolBoxStore">
     <option name="recentBranches">
       <RecentBranches>
@@ -92,7 +90,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "feature/date-filters",
+    "git-widget-placeholder": "feature/Mediafilters",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/letic/codeProjects/estudos/T-Academy/java-netflix/src",
     "settings.editor.selected.configurable": "preferences.pluginManager"

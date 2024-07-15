@@ -11,9 +11,12 @@ import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
 import org.fusesource.jansi.Ansi;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class NexflixApp {
     private final LoginService loginService;
@@ -403,6 +406,21 @@ public class NexflixApp {
                 applyYearAndRatingFilter(mediaList);
                 break;
             case 5:
+                applyCategoryFilter(mediaList);
+                break;
+            case 6:
+                applyTitleFilter(mediaList);
+                break;
+            case 7:
+                applyReleaseDateFilter(mediaList);
+                break;
+            case 8:
+                applyRatingFilter(mediaList);
+                break;
+            case 9:
+                applyDirectorFilter(mediaList);
+                break;
+            case 10:
                 return;
             default:
                 ConsoleMessage.printInvalidOptionMessage();
@@ -459,6 +477,175 @@ public class NexflixApp {
 
         displayMediaListOptions(mediaService.filterByYearAndRating(mediaList, year, minRating));
     }
+
+    /**
+     * Solicita ao usuário que insira uma categoria e filtra a lista de itens de mídia por essa categoria.
+     * Exibe todas as categorias disponíveis com índices para seleção pelo usuário.
+     * Define a flag {@code hasFilters} como true.
+     *
+     * @param mediaList A lista de itens de mídia para filtrar por categoria.
+     */
+    private void applyCategoryFilter(List<Media> mediaList) {
+        this.hasFilters = true;
+
+        // Exibe as categorias disponíveis para referência do usuário
+        ConsoleMessage.println("[1] Aventura");
+        ConsoleMessage.println("[2] Comédia");
+        ConsoleMessage.println("[3] Fantasia");
+        ConsoleMessage.println("[4] Terror");
+        ConsoleMessage.println("[5] Animação");
+        ConsoleMessage.println("[6] Ficção científica");
+        ConsoleMessage.println("[7] Drama");
+        ConsoleMessage.println("[8] Romance");
+
+        boolean categoriaValida = false;
+        Category categoriaSelecionada = null;
+
+        while (!categoriaValida) {
+            try {
+                String indiceCategoriaStr = InputValidator.getString("Selecione a categoria pelo número:");
+                int indiceCategoria = Integer.parseInt(indiceCategoriaStr);
+
+                if (indiceCategoria >= 1 && indiceCategoria <= 8) {
+                    categoriaSelecionada = Category.values()[indiceCategoria - 1];
+                    categoriaValida = true;
+                } else {
+                    ConsoleMessage.println("Número de categoria inválido! Por favor, selecione um número válido.", Ansi.Color.RED);
+                }
+            } catch (NumberFormatException e) {
+                ConsoleMessage.println("Entrada inválida! Por favor, digite um número válido.", Ansi.Color.RED);
+            }
+        }
+
+        displayMediaListOptions(mediaService.filterByCategory(mediaList, categoriaSelecionada));
+    }
+
+
+    /**
+     * Solicita ao usuário que selecione um título da lista mostrada e filtra a lista de itens de mídia por esse título.
+     * Define a flag {@code hasFilters} como true.
+     *
+     * @param mediaList A lista de itens de mídia para filtrar por título.
+     */
+    private void applyTitleFilter(List<Media> mediaList) {
+        this.hasFilters = true;
+
+
+        ConsoleMessage.println("Títulos disponíveis para filtragem:");
+        for (int i = 0; i < mediaList.size(); i++) {
+            ConsoleMessage.println("[" + (i + 1) + "] " + mediaList.get(i).getTitle());
+        }
+
+        boolean tituloValido = false;
+        Media mediaSelecionada = null;
+
+        while (!tituloValido) {
+            try {
+                String indiceTituloStr = InputValidator.getString("Selecione o título pelo número:");
+                int indiceTitulo = Integer.parseInt(indiceTituloStr);
+
+                if (indiceTitulo >= 1 && indiceTitulo <= mediaList.size()) {
+                    mediaSelecionada = mediaList.get(indiceTitulo - 1);
+                    tituloValido = true;
+                } else {
+                    ConsoleMessage.println("Número de título inválido! Por favor, selecione um número válido.", Ansi.Color.RED);
+                }
+            } catch (NumberFormatException e) {
+                ConsoleMessage.println("Entrada inválida! Por favor, digite um número válido.", Ansi.Color.RED);
+            }
+        }
+
+        displayMediaListOptions(mediaService.filterByTitle(mediaList, mediaSelecionada.getTitle()));
+    }
+
+
+
+    /**
+     * Applies a filter by release date range to the list of media items.
+     * Prompts the user to input initial and final release dates and filters the list accordingly.
+     * Displays an error message if the input date format is invalid.
+     * Sets the flag {@code hasFilters} to true.
+     *
+     * @param mediaList The list of media items to filter by release date range.
+     */
+    private void applyReleaseDateFilter(List<Media> mediaList) {
+        this.hasFilters = true;
+        boolean keepAsking = true;
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        while (keepAsking) {
+            try {
+                String initialDateInput = InputValidator.getString("Digite a data inicial (DD/MM/AAAA):");
+                String finalDateInput = InputValidator.getString("Digite a data final (DD/MM/AAAA):");
+
+                LocalDate initialDate = LocalDate.parse(initialDateInput, dateFormatter);
+                LocalDate finalDate = LocalDate.parse(finalDateInput, dateFormatter);
+
+                if (finalDate.isBefore(initialDate) || initialDate.isAfter(finalDate)) {
+                    ConsoleMessage.println("Data inicial deve ser menor que a data final!", Ansi.Color.RED);
+                } else {
+                    List<Media> filteredMediaList = mediaService.filterByReleaseDate(mediaList, initialDate, finalDate);
+                    displayMediaListOptions(filteredMediaList);
+                    keepAsking = false;
+                }
+            } catch (DateTimeParseException e) {
+                ConsoleMessage.println("Formato de data inválido! Use o formato DD/MM/AAAA.", Ansi.Color.RED);
+            }
+        }
+    }
+
+    /**
+     * Prompts the user to input a minimum rating and filters the list of media items by that rating.
+     * Sets the flag {@code hasFilters} to true.
+     *
+     * @param mediaList The list of media items to filter by rating.
+     */
+    private void applyRatingFilter(List<Media> mediaList) {
+        this.hasFilters = true;
+        double minRating = InputValidator.getDouble("Digite a nota mínima de avaliação (0.0-5.0):");
+
+        displayMediaListOptions(mediaService.filterByRating(mediaList, minRating));
+    }
+
+
+    /**
+     * Solicita ao usuário que selecione um diretor da lista mostrada e filtra a lista de itens de mídia por esse diretor.
+     * Define a flag {@code hasFilters} como true.
+     *
+     * @param mediaList A lista de itens de mídia para filtrar por diretor.
+     */
+    private void applyDirectorFilter(List<Media> mediaList) {
+        this.hasFilters = true;
+
+
+        ConsoleMessage.println("Diretores disponíveis para filtragem:");
+        for (int i = 0; i < mediaList.size(); i++) {
+            ConsoleMessage.println("[" + (i + 1) + "] " + mediaList.get(i).getDirector());
+        }
+
+        boolean diretorValido = false;
+        String diretorSelecionado = null;
+
+        while (!diretorValido) {
+            try {
+                String indiceDiretorStr = InputValidator.getString("Selecione o diretor pelo número:");
+                int indiceDiretor = Integer.parseInt(indiceDiretorStr);
+
+                if (indiceDiretor >= 1 && indiceDiretor <= mediaList.size()) {
+                    diretorSelecionado = mediaList.get(indiceDiretor - 1).getDirector();
+                    diretorValido = true;
+                } else {
+                    ConsoleMessage.println("Número de diretor inválido! Por favor, selecione um número válido.", Ansi.Color.RED);
+                }
+            } catch (NumberFormatException e) {
+                ConsoleMessage.println("Entrada inválida! Por favor, digite um número válido.", Ansi.Color.RED);
+            }
+        }
+
+        displayMediaListOptions(mediaService.filterByDirector(mediaList, diretorSelecionado));
+    }
+
+
 
     private void displayTvShowCrudOptions() {
         while (true) {
@@ -800,6 +987,11 @@ public class NexflixApp {
                 "\n[2] Ordenar por data de lançamento (crescente)" +
                 "\n[3] Filtrar por intervalo de datas" +
                 "\n[4] Filtrar por ano e avaliação mínima" +
-                "\n[5] Voltar";
+                "\n[5] Filtrar por Categoria" +
+                "\n[6] Filtrar por Título" +
+                "\n[7] Filtrar por Data de Lançamento" +
+                "\n[8] Filtrar por Avaliação" +
+                "\n[9] Filtrar por Diretor" +
+                "\n[10] Voltar";
     }
 }
