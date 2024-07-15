@@ -106,7 +106,7 @@ public final class InputValidator {
 
                 return LocalDate.parse(entry, formatter);
             } catch (Exception e) {
-                System.out.println("Formato inválido. Tente novamente utilizando o formato dd/MM/yyyy.");
+                ConsoleMessage.println("Formato inválido. Tente novamente utilizando o formato dd/MM/yyyy.", Ansi.Color.RED);
             }
         }
     }
