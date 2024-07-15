@@ -13,16 +13,21 @@ import org.fusesource.jansi.Ansi;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class NexflixApp {
     private final LoginService loginService;
     private final UserService userService;
     private final MediaService mediaService;
+    private boolean hasFilters;
+    private boolean continueFilter;
 
     public NexflixApp(LoginService loginService, UserService userService, MediaService mediaService) {
         this.loginService = loginService;
         this.userService = userService;
         this.mediaService = mediaService;
+        this.hasFilters = false;
+        this.continueFilter = false;
     }
 
     /**
@@ -112,10 +117,10 @@ public class NexflixApp {
 
             switch (InputValidator.getInteger(getMenuOptions())) {
                 case 1:
-                    displayMovieListOptions();
+                    displayMediaListOptions(mediaService.getAllMovies());
                     break;
                 case 2:
-                    displayTvShowListOptions();
+                    displayMediaListOptions(mediaService.getAllTvShows());
                     break;
                 case 3:
                     if (showAdminOptions) {
@@ -149,78 +154,26 @@ public class NexflixApp {
     }
 
     /**
-     * Displays the list of movies and provides options to the user.<p>
-     * Options include selecting a movie to view its details or exiting the list.
-     * If no movies are available, a message is displayed and the method returns.
-     * The loop continues until the user chooses to exit.
+     * Displays options for interacting with a list of media items.
+     * Allows selection of media, filtering, resetting filters, or exiting.
+     *
+     * @param mediaList The list of media items to display and interact with.
      */
-    private void displayMovieListOptions() {
-        List<Media> movies = mediaService.getAllMovies();
-
-        if (movies.isEmpty()) {
+    private void displayMediaListOptions(List<Media> mediaList) {
+        if (mediaList.isEmpty()) {
             ConsoleMessage.println("\nNenhum registro encontrado.\n", Ansi.Color.RED);
             return;
         }
 
-        while (true) {
-            ConsoleMessage.printMovieCatalogTitle();
-            showMediaList(movies);
+        boolean isListOfMovies = mediaList.stream().anyMatch(media -> media instanceof Movie);
+        this.continueFilter = true;
 
-            switch (InputValidator.getInteger(getMediaListOptions())) {
-                case 1:
-                    Media movie = mediaService.getMediaById(InputValidator.getInteger("Escolha um filme (número)"));
+        while (this.continueFilter) {
+            displayCatalogTitle(isListOfMovies);
+            showMediaList(mediaList);
 
-                    if (movie == null) {
-                        ConsoleMessage.printInvalidOptionMessage();
-                        break;
-                    }
-
-                    displayMediaOptions(movie);
-                    break;
-                case 2:
-                    return;
-                default:
-                    ConsoleMessage.printInvalidOptionMessage();
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Displays the list of tv shows and provides options to the user.<p>
-     * Options include selecting a tv show to view its details or exiting the list.
-     * If no tv shows are available, a message is displayed and the method returns.
-     * The loop continues until the user chooses to exit.
-     */
-    private void displayTvShowListOptions() {
-        List<Media> tvShows = mediaService.getAllTvShows();
-
-        if (tvShows.isEmpty()) {
-            ConsoleMessage.println("\nNenhum registro encontrado.\n", Ansi.Color.RED);
-            return;
-        }
-
-        while (true) {
-            ConsoleMessage.printTvShowCatalogTitle();
-            showMediaList(tvShows);
-
-            switch (InputValidator.getInteger(getMediaListOptions())) {
-                case 1:
-                    Media tvShow = mediaService.getMediaById(InputValidator.getInteger("Escolha uma série (número)"));
-
-                    if (tvShow == null) {
-                        ConsoleMessage.printInvalidOptionMessage();
-                        break;
-                    }
-
-                    displayMediaOptions(tvShow);
-                    break;
-                case 2:
-                    return;
-                default:
-                    ConsoleMessage.printInvalidOptionMessage();
-                    break;
-            }
+            int option = InputValidator.getInteger(getMediaListOptions());
+            handleMediaListOption(option, mediaList, isListOfMovies);
         }
     }
 
@@ -331,6 +284,180 @@ public class NexflixApp {
                     break;
             }
         }
+    }
+
+    /**
+     * Displays the catalog title based on whether the current list of media items is movies or TV shows.
+     *
+     * @param isListOfMovies Indicates whether the current list of media items is movies.
+     */
+    private void displayCatalogTitle(boolean isListOfMovies) {
+        if (isListOfMovies) {
+            ConsoleMessage.printMovieCatalogTitle();
+        } else {
+            ConsoleMessage.printTvShowCatalogTitle();
+        }
+    }
+
+    /**
+     * Handles user selected options for interacting with a list of media items.
+     * Allows selection of a media item for detailed display,
+     * filtering the list, resetting filters, or exiting the menu.
+     *
+     * @param option         The selected option to handle.
+     * @param mediaList      The current list of media items being interacted with.
+     * @param isListOfMovies Indicates if the current media list contains movies or tv shows.
+     */
+    private void handleMediaListOption(int option, List<Media> mediaList, boolean isListOfMovies) {
+        switch (option) {
+            case 1:
+                handleSelectMedia();
+                break;
+            case 2:
+                displayFilterOptions(mediaList);
+                break;
+            case 3:
+                resetFilters(isListOfMovies);
+                break;
+            case 4:
+                exitMediaList();
+                break;
+            default:
+                ConsoleMessage.printInvalidOptionMessage();
+                break;
+        }
+    }
+
+    /**
+     * Handles the selection of a media item by prompting the user to choose a media ID.
+     * If no media item is found, displays an invalid option message.
+     * Otherwise, displays options (watching) for the selected media item.
+     */
+    private void handleSelectMedia() {
+        Media media = mediaService.getMediaById(InputValidator.getInteger("Escolha uma mídia (número)"));
+        if (media == null) {
+            ConsoleMessage.printInvalidOptionMessage();
+        } else {
+            displayMediaOptions(media);
+        }
+    }
+
+    /**
+     * Resets any applied filters and displays the full list of media items.
+     * Sets the {@code hasFilters} flag to false after resetting.
+     *
+     * @param isListOfMovies Indicates whether the current list of media items is movies or TV shows.
+     *                       Determines which set of media items to display after resetting filters.
+     */
+    private void resetFilters(boolean isListOfMovies) {
+        this.hasFilters = false;
+
+        if (isListOfMovies) {
+            displayMediaListOptions(mediaService.getAllMovies());
+        } else {
+            displayMediaListOptions(mediaService.getAllTvShows());
+        }
+    }
+
+    /**
+     * Exits the media list interaction loop by setting {@code continueFilter} to false.
+     * Also resets the {@code hasFilters} flag to false.
+     */
+    private void exitMediaList() {
+        this.continueFilter = false;
+        this.hasFilters = false;
+    }
+
+    /**
+     * Displays options for filtering a list of media items.
+     *
+     * @param mediaList The list of media items to apply filters to.
+     */
+    private void displayFilterOptions(List<Media> mediaList) {
+        while (continueFilter) {
+            ConsoleMessage.println("Escolha uma opção de filtro:");
+
+            int option = InputValidator.getInteger(getFilterOptions());
+            handleFilterOption(option, mediaList);
+        }
+    }
+
+    /**
+     * Handles the selected filter options.
+     *
+     * @param option    The selected filter option to handle.
+     * @param mediaList The list of media items to apply filters to.
+     */
+    private void handleFilterOption(int option, List<Media> mediaList) {
+        switch (option) {
+            case 1:
+                applyFilterAndDisplay(() -> mediaService.filterReleaseDateInDescendingOrder(mediaList));
+                break;
+            case 2:
+                applyFilterAndDisplay(() -> mediaService.filterReleaseDateInAscendingOrder(mediaList));
+                break;
+            case 3:
+                applyDateRangeFilter(mediaList);
+                break;
+            case 4:
+                applyYearAndRatingFilter(mediaList);
+                break;
+            case 5:
+                return;
+            default:
+                ConsoleMessage.printInvalidOptionMessage();
+                break;
+        }
+    }
+
+    /**
+     * Applies a filter function to the list of media items and displays the filtered results.
+     * Sets the flag {@code hasFilters} to true.
+     *
+     * @param filterFunction A supplier that provides a filtered list of media items.
+     */
+    private void applyFilterAndDisplay(Supplier<List<Media>> filterFunction) {
+        this.hasFilters = true;
+        displayMediaListOptions(filterFunction.get());
+    }
+
+    /**
+     * Prompts the user to input a date range and filters the list of media items by release date within that range.
+     * Displays an error message if the initial date is after the final date.
+     * Sets the flag {@code hasFilters} to true.
+     *
+     * @param mediaList The list of media items to filter by release date.
+     */
+    private void applyDateRangeFilter(List<Media> mediaList) {
+        this.hasFilters = true;
+        boolean keepAsking = true;
+
+        while (keepAsking) {
+            LocalDate initialDate = InputValidator.getLocalDate("Digite a data inicial:");
+            LocalDate finalDate = InputValidator.getLocalDate("Digite a data final:");
+
+            if (finalDate.isBefore(initialDate) || initialDate.isAfter(finalDate)) {
+                ConsoleMessage.println("Data inicial deve ser menor que a data final!", Ansi.Color.RED);
+            } else {
+                keepAsking = false;
+                displayMediaListOptions(mediaService.filterByReleaseDate(mediaList, initialDate, finalDate));
+            }
+        }
+    }
+
+    /**
+     * Prompts the user to input a year and minimum rating, filters the list of media items by these criteria,
+     * and displays the filtered results.
+     * Sets the flag {@code hasFilters} to true.
+     *
+     * @param mediaList The list of media items to filter by year and minimum rating.
+     */
+    private void applyYearAndRatingFilter(List<Media> mediaList) {
+        this.hasFilters = true;
+        int year = InputValidator.getInteger("Digite o ano de lançamento:");
+        double minRating = InputValidator.getDouble("Digite a nota mínima de avaliação:");
+
+        displayMediaListOptions(mediaService.filterByYearAndRating(mediaList, year, minRating));
     }
 
     private void displayTvShowCrudOptions() {
@@ -584,6 +711,10 @@ public class NexflixApp {
 
         table.setTextAlignment(TextAlignment.LEFT);
         ConsoleMessage.println(table.render());
+
+        if (hasFilters) {
+            ConsoleMessage.println("* Filtros aplicados\n", Ansi.Color.GREEN);
+        }
     }
 
     /**
@@ -640,7 +771,7 @@ public class NexflixApp {
      * @return A formatted string of options for selecting an item from a media list.
      */
     private String getMediaListOptions() {
-        return "[1] Escolher\n[2] Voltar";
+        return "[1] Escolher\n[2] Filtrar\n[3] Limpar filtros\n[4] Voltar";
     }
 
     /**
@@ -662,5 +793,13 @@ public class NexflixApp {
                 "\n[2] Editar" +
                 "\n[3] Excluir" +
                 "\n[4] Voltar";
+    }
+
+    private String getFilterOptions() {
+        return "[1] Ordenar por data de lançamento (decrescente)" +
+                "\n[2] Ordenar por data de lançamento (crescente)" +
+                "\n[3] Filtrar por intervalo de datas" +
+                "\n[4] Filtrar por ano e avaliação mínima" +
+                "\n[5] Voltar";
     }
 }
