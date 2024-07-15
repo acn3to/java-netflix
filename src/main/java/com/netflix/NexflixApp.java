@@ -154,12 +154,25 @@ public class NexflixApp {
                         break;
                     }
 
+                    if (loginService.getLoggedInUser() != null) {
+                        displayProfileOptions();
+                        break;
+                    }
+
                     ConsoleMessage.printInvalidOptionMessage();
                     break;
                 case 5:
                     if (showAdminOptions) {
                         loginService.logout();
                         return;
+                    }
+
+                    ConsoleMessage.printInvalidOptionMessage();
+                    break;
+                case 6:
+                    if (loginService.getLoggedInUser() != null && !(showAdminOptions)) {
+                        displayProfileOptions();
+                        break;
                     }
 
                     ConsoleMessage.printInvalidOptionMessage();
@@ -499,13 +512,13 @@ public class NexflixApp {
             case 8:
                 applyDirectorFilter(mediaList);
                 break;
+            case 10:
             case 9:
                 displayMenuOptions();
                 return;
             default:
                 ConsoleMessage.printInvalidOptionMessage();
-                break;
-        }
+                break;}
     }
 
 
@@ -987,9 +1000,6 @@ public class NexflixApp {
                 "[3] Sair";
     }
 
-    /**
-     * @return A formatted string of main menu options based on the user's role
-     */
     private String getMenuOptions() {
         var defaultOptions = "[1] Visualizar catálogo de filmes\n" +
                 "[2] Visualizar catálogo de séries\n";
@@ -997,10 +1007,17 @@ public class NexflixApp {
         if (loginService.getLoggedInUser().isAdmin()) {
             defaultOptions = defaultOptions +
                     "[3] Gerenciar filmes\n" +
-                    "[4] Gerenciar séries\n";
+                    "[4] Gerenciar séries\n" +
+                    "[5] Logout";
+        } else {
+            if (loginService.getLoggedInUser() != null && (!loginService.getLoggedInUser().isAdmin())) {
+                defaultOptions += "[6] Gerenciar Perfis";
+            }
+            defaultOptions = defaultOptions + "\n[3] Logout";
         }
 
-        return defaultOptions + (loginService.getLoggedInUser().isAdmin() ? "[5] Logout" : "[3] Logout");
+
+        return defaultOptions;
     }
 
     /**
@@ -1060,4 +1077,235 @@ public class NexflixApp {
                 "\n[8] Filtrar por Diretor" +
                 "\n[9] Voltar";
     }
+
+    private void displayProfileOptions() {
+        while (true) {
+            ConsoleMessage.println("Escolha uma opção:");
+            switch (InputValidator.getInteger(getProfileOptions())) {
+                case 1:
+                    createProfile();
+                    break;
+                case 2:
+                    listProfiles();
+                    break;
+                case 3:
+                    selectProfile();
+                    break;
+                case 4:
+                    return;  // Voltar ao menu principal
+                default:
+                    ConsoleMessage.printInvalidOptionMessage();
+                    break;
+            }
+        }
+    }
+
+    private void createProfile() {
+        ConsoleMessage.println("------------------------\nCriar novo perfil\n------------------------");
+
+        try {
+            if (loginService.getLoggedInUser() == null) {
+                ConsoleMessage.printInvalidOptionMessage();
+                return;
+            }
+
+            String name = InputValidator.getString("Digite o nome do perfil:");
+            User user = loginService.getLoggedInUser();
+            int profileId = userService.getNextProfileId(user.getId()); // Obter o próximo ID disponível
+
+            Profile profile = new Profile(profileId, name, user);
+            userService.addProfileToUser(user.getId(), profile);
+
+            ConsoleMessage.println("Perfil criado com sucesso!", Ansi.Color.GREEN);
+        } catch (Exception e) {
+            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+        }
+    }
+
+    private void listProfiles() {
+        ConsoleMessage.println("------------------------\nTodos os Perfis\n------------------------");
+
+        try {
+            if (loginService.getLoggedInUser() == null) {
+                ConsoleMessage.printInvalidOptionMessage();
+                return;
+            }
+
+            User user = loginService.getLoggedInUser();
+            List<Profile> profiles = userService.getProfilesByUserId(user.getId());
+
+            if (profiles.isEmpty()) {
+                ConsoleMessage.println("Nenhum perfil encontrado.", Ansi.Color.RED);
+                return;
+            }
+
+            AsciiTable table = new AsciiTable();
+            table.addRule();
+            table.addRow("ID", "Nome");
+            table.addRule();
+
+            for (Profile profile : profiles) {
+                table.addRow(profile.getId(), profile.getName());
+            }
+
+            table.addRule();
+            table.setTextAlignment(TextAlignment.LEFT);
+            ConsoleMessage.println(table.render());
+        } catch (Exception e) {
+            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+        }
+    }
+
+    private void selectProfile() {
+        try {
+            User user = loginService.getLoggedInUser();
+            if (user == null) {
+                ConsoleMessage.printInvalidOptionMessage();
+                return;
+            }
+
+            List<Profile> profiles = userService.getProfilesByUserId(user.getId());
+
+            if (profiles.isEmpty()) {
+                ConsoleMessage.println("Nenhum perfil encontrado.", Ansi.Color.RED);
+                return;
+            }
+
+            ConsoleMessage.println("Escolha um perfil:");
+            profiles.forEach(profile -> ConsoleMessage.println("[" + profile.getId() + "] " + profile.getName()));
+
+            int profileId = InputValidator.getInteger("Digite o ID do perfil:");
+            Profile profile = userService.getProfileById(user.getId(), profileId);
+
+            if (profile == null) {
+                ConsoleMessage.printInvalidOptionMessage();
+                return;
+            }
+
+            // Exemplo de uma ação a ser feita após selecionar um perfil
+            // Você pode chamar outros métodos aqui ou mostrar um menu específico para o perfil
+            ConsoleMessage.println("Perfil selecionado: " + profile.getName());
+
+            // Exemplo: Mostre opções específicas para o perfil selecionado
+            displayProfileSpecificOptions(profile);
+
+        } catch (Exception e) {
+            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+        }
+    }
+
+
+    private String getProfileOptions() {
+        return "[1] Criar novo perfil\n" +
+                "[2] Listar perfis\n" +
+                "[3] Selecionar perfil\n" +
+                "[4] Voltar";
+    }
+
+    private void addMediaToMyList(Profile profile) {
+        try {
+            List<Media> mediaList = mediaService.getAllMedia();
+            ConsoleMessage.println("Escolha uma mídia para adicionar à lista:");
+
+            for (Media media : mediaList) {
+                ConsoleMessage.println("[" + media.getId() + "] " + media.getTitle());
+            }
+
+            int mediaId = InputValidator.getInteger("Digite o ID da mídia:");
+            Media media = mediaService.getMediaById(mediaId);
+
+            if (media == null) {
+                ConsoleMessage.printInvalidOptionMessage();
+                return;
+            }
+
+            userService.addToProfileMyList(loginService.getLoggedInUser().getId(), profile.getId(), media);
+            ConsoleMessage.println("Mídia adicionada à lista com sucesso!", Ansi.Color.GREEN);
+        } catch (Exception e) {
+            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+        }
+    }
+
+    private void removeMediaFromMyList(Profile profile) {
+        try {
+            List<Media> myList = userService.getProfileMyList(loginService.getLoggedInUser().getId(), profile.getId());
+
+            if (myList.isEmpty()) {
+                ConsoleMessage.println("A lista está vazia.", Ansi.Color.RED);
+                return;
+            }
+
+            ConsoleMessage.println("Escolha uma mídia para remover da lista:");
+
+            for (Media media : myList) {
+                ConsoleMessage.println("[" + media.getId() + "] " + media.getTitle());
+            }
+
+            int mediaId = InputValidator.getInteger("Digite o ID da mídia:");
+            Media media = mediaService.getMediaById(mediaId);
+
+            if (media == null || !myList.contains(media)) {
+                ConsoleMessage.printInvalidOptionMessage();
+                return;
+            }
+
+            userService.removeFromProfileMyList(loginService.getLoggedInUser().getId(), profile.getId(), media);
+            ConsoleMessage.println("Mídia removida da lista com sucesso!", Ansi.Color.GREEN);
+        } catch (Exception e) {
+            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+        }
+    }
+
+    private void viewMyList(Profile profile) {
+        try {
+            List<Media> myList = userService.getProfileMyList(loginService.getLoggedInUser().getId(), profile.getId());
+
+            if (myList.isEmpty()) {
+                ConsoleMessage.println("A lista está vazia.", Ansi.Color.RED);
+                return;
+            }
+
+            ConsoleMessage.println("Sua lista de mídias:");
+            showMediaList(myList);
+        } catch (Exception e) {
+            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+        }
+    }
+
+    private String getMyListOptions() {
+        return "[1] Adicionar mídia à lista\n" +
+                "[2] Remover mídia da lista\n" +
+                "[3] Ver minha lista\n" +
+                "[4] Voltar";
+    }
+
+    private void displayProfileSpecificOptions(Profile profile) {
+        while (true) {
+            ConsoleMessage.println("Escolha uma opção:");
+            // Exemplo de opções
+            ConsoleMessage.println("[1] Adicionar mídia à lista");
+            ConsoleMessage.println("[2] Remover mídia da lista");
+            ConsoleMessage.println("[3] Ver minha lista");
+            ConsoleMessage.println("[4] Voltar ao menu principal");
+
+            int option = InputValidator.getInteger("Digite a opção desejada:");
+            switch (option) {
+                case 1:
+                    addMediaToMyList(profile);
+                    break;
+                case 2:
+                    removeMediaFromMyList(profile);
+                    break;
+                case 3:
+                    viewMyList(profile);
+                    break;
+                case 4:
+                    return;  // Voltar ao menu principal
+                default:
+                    ConsoleMessage.printInvalidOptionMessage();
+                    break;
+            }
+        }
+    }
+
 }
