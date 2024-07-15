@@ -1,5 +1,7 @@
 package com.netflix.entities;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class User {
@@ -8,6 +10,7 @@ public class User {
     private String email;
     private String password;
     private boolean isAdmin;
+    private List<String> watchedMovies;
 
     public User(int id, String name, String email, String password, boolean isAdmin) {
         this.id = id;
@@ -15,6 +18,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.isAdmin = isAdmin;
+        this.watchedMovies = new ArrayList<>();
     }
 
     public User(String name, String email, String password) {
@@ -70,6 +74,14 @@ public class User {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public void addWatchedMovie(String movieName) {
+        watchedMovies.add(movieName);
+    }
+
+    public List<String> getWatchedMovies() {
+        return watchedMovies;
     }
 
 

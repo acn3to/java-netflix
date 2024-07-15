@@ -1,6 +1,9 @@
 package com.netflix;
 
-import com.netflix.entities.*;
+import com.netflix.entities.Media;
+import com.netflix.entities.Movie;
+import com.netflix.entities.TvShow;
+import com.netflix.entities.User;
 import com.netflix.services.LoginService;
 import com.netflix.services.MediaService;
 import com.netflix.services.UserService;
@@ -10,6 +13,7 @@ import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
 import org.fusesource.jansi.Ansi;
 
+import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -22,6 +26,7 @@ public class NexflixApp {
     private final LoginService loginService;
     private final UserService userService;
     private final MediaService mediaService;
+    static Scanner scanner = new Scanner(System.in);
     private boolean hasFilters;
     private boolean continueFilter;
 
@@ -42,6 +47,7 @@ public class NexflixApp {
     public void run() {
         while (true) {
             if (loginService.getLoggedInUser() == null) {
+                clearConsole();
                 ConsoleMessage.printLogo();
                 ConsoleMessage.print("Bem-vindo(a) à Netflix! ");
             }
@@ -70,6 +76,7 @@ public class NexflixApp {
      * If an error occurs, it prints the error message.
      */
     private void performLogin() {
+        clearConsole();
         ConsoleMessage.println("--------------------\nLogin\n--------------------");
 
         try {
@@ -78,10 +85,11 @@ public class NexflixApp {
 
             loginService.login(email, password);
 
-            showLoggedUserInformation();
+
             displayMenuOptions();
         } catch (Exception e) {
             ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+            aperteParaContinuar();
         }
     }
 
@@ -91,6 +99,7 @@ public class NexflixApp {
      * If an error occurs, it prints the error message.
      */
     private void performUserRegistration() {
+        clearConsole();
         ConsoleMessage.println("------------------------\nCadastrar novo usuário\n------------------------");
 
         try {
@@ -116,6 +125,7 @@ public class NexflixApp {
         boolean showAdminOptions = loginService.getLoggedInUser().isAdmin();
 
         while (true) {
+            showLoggedUserInformation();
             ConsoleMessage.println("Navegue pelas opções abaixo:");
 
             switch (InputValidator.getInteger(getMenuOptions())) {
@@ -125,6 +135,14 @@ public class NexflixApp {
                 case 2:
                     displayMediaListOptions(mediaService.getAllTvShows());
                     break;
+
+
+
+//                ADICIONAR OPÇÃO DE VER HISTÓRICO DE FILMES AQUI:
+//              case 3:
+//                  displayWatchedMovies();
+//                  break;
+//
                 case 3:
                     if (showAdminOptions) {
                         displayMovieCrudOptions();
@@ -156,6 +174,66 @@ public class NexflixApp {
         }
     }
 
+    /**
+     * Displays the list of movies and provides options to the user.<p>
+     * Options include selecting a movie to view its details or exiting the list.
+     * If no movies are available, a message is displayed and the method returns.
+     * The loop continues until the user chooses to exit.
+     */
+    private void displayMovieListOptions() {
+        List<Media> movies = mediaService.getAllMovies();
+        clearConsole();
+        if (movies.isEmpty()) {
+            ConsoleMessage.println("\nNenhum filme encontrado.\n", Ansi.Color.RED);
+            aperteParaContinuar();
+            return;
+        }
+
+        while (true) {
+            clearConsole();
+            ConsoleMessage.printMovieCatalogTitle();
+            showMediaList(movies);
+
+            switch (InputValidator.getInteger(getMediaListOptions())) {
+                case 1:
+                    Media movie = mediaService.getMediaById(InputValidator.getInteger("Escolha um filme (número)"));
+
+                    if (movie == null) {
+                        ConsoleMessage.printInvalidOptionMessage();
+                        break;
+                    }
+
+                    displayMediaOptions(movie);
+                    break;
+                case 2:
+                    return;
+                default:
+                    ConsoleMessage.printInvalidOptionMessage();
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Displays the list of tv shows and provides options to the user.<p>
+     * Options include selecting a tv show to view its details or exiting the list.
+     * If no tv shows are available, a message is displayed and the method returns.
+     * The loop continues until the user chooses to exit.
+     */
+    private void displayTvShowListOptions() {
+        List<Media> tvShows = mediaService.getAllTvShows();
+
+        if (tvShows.isEmpty()) {
+            clearConsole();
+            ConsoleMessage.println("\nNenhuma série encontrada.\n", Ansi.Color.RED);
+            aperteParaContinuar();
+            return;
+        }
+
+        while (true) {
+            clearConsole();
+            ConsoleMessage.printTvShowCatalogTitle();
+            showMediaList(tvShows);
     /**
      * Displays options for interacting with a list of media items.
      * Allows selection of media, filtering, resetting filters, or exiting.
@@ -194,6 +272,7 @@ public class NexflixApp {
      * @param media The selected media item (Movie or TvShow).
      */
     private void displayMediaOptions(Media media) {
+        clearConsole();
         ConsoleMessage.println(media.getInformation());
 
         while (true) {
@@ -228,6 +307,7 @@ public class NexflixApp {
         boolean selectingSeason = true;
 
         while (selectingSeason) {
+            clearConsole();
             ConsoleMessage.println("Escolha uma temporada:");
             tvShow.getSeasons().forEach((season, episodes) -> {
                 ConsoleMessage.println("[" + season + "] Temporada " + season);
@@ -244,6 +324,7 @@ public class NexflixApp {
         }
 
         while (true) {
+            clearConsole();
             ConsoleMessage.println("Escolha um episódio:");
             for (int i = 0; i < episodeList.size(); i++) {
                 ConsoleMessage.println("[" + (i + 1) + "] " + episodeList.get(i));
@@ -251,6 +332,7 @@ public class NexflixApp {
 
             if (episodeList.get(InputValidator.getInteger("") - 1).isEmpty()) {
                 ConsoleMessage.printInvalidOptionMessage();
+                aperteParaContinuar();
                 break;
             } else {
                 displayWatchingOptions();
@@ -273,6 +355,7 @@ public class NexflixApp {
         boolean isPaused = false;
 
         while (true) {
+            clearConsole();
             if (isPaused) ConsoleMessage.printTvPaused();
             else ConsoleMessage.printTvRunning();
 
@@ -412,15 +495,12 @@ public class NexflixApp {
                 applyTitleFilter(mediaList);
                 break;
             case 7:
-                applyReleaseDateFilter(mediaList);
-                break;
-            case 8:
                 applyRatingFilter(mediaList);
                 break;
-            case 9:
+            case 8:
                 applyDirectorFilter(mediaList);
                 break;
-            case 10:
+            case 9:
                 return;
             default:
                 ConsoleMessage.printInvalidOptionMessage();
@@ -542,42 +622,6 @@ public class NexflixApp {
         }
     }
 
-
-
-    /**
-     * Applies a filter by release date range to the list of media items.
-     * Prompts the user to input initial and final release dates and filters the list accordingly.
-     * Displays an error message if the input date format is invalid.
-     * Sets the flag {@code hasFilters} to true.
-     *
-     * @param mediaList The list of media items to filter by release date range.
-     */
-    private void applyReleaseDateFilter(List<Media> mediaList) {
-        this.hasFilters = true;
-        boolean keepAsking = true;
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        while (keepAsking) {
-            try {
-                String initialDateInput = InputValidator.getString("Digite a data inicial (DD/MM/AAAA):");
-                String finalDateInput = InputValidator.getString("Digite a data final (DD/MM/AAAA):");
-
-                LocalDate initialDate = LocalDate.parse(initialDateInput, dateFormatter);
-                LocalDate finalDate = LocalDate.parse(finalDateInput, dateFormatter);
-
-                if (finalDate.isBefore(initialDate) || initialDate.isAfter(finalDate)) {
-                    ConsoleMessage.println("Data inicial deve ser menor que a data final!", Ansi.Color.RED);
-                } else {
-                    List<Media> filteredMediaList = mediaService.filterByReleaseDate(mediaList, initialDate, finalDate);
-                    displayMediaListOptions(filteredMediaList);
-                    keepAsking = false;
-                }
-            } catch (DateTimeParseException e) {
-                ConsoleMessage.println("Formato de data inválido! Use o formato DD/MM/AAAA.", Ansi.Color.RED);
-            }
-        }
-    }
-
     /**
      * Prompts the user to input a minimum rating and filters the list of media items by that rating.
      * Sets the flag {@code hasFilters} to true.
@@ -617,6 +661,7 @@ public class NexflixApp {
 
     private void displayTvShowCrudOptions() {
         while (true) {
+            clearConsole();
             ConsoleMessage.println("Escolha uma opção:");
             switch (InputValidator.getInteger(getCrudOptions())) {
                 case 1:
@@ -643,7 +688,7 @@ public class NexflixApp {
      */
     private void handleCreateTvShow() {
         TvShow tvShow = new TvShow();
-
+        clearConsole();
         tvShow.setTitle(InputValidator.getString("Insira o título da série:"));
         tvShow.setDescription(InputValidator.getString("Insira a descrição da série:"));
         tvShow.setDirector(InputValidator.getString("Insira o diretor da série:"));
@@ -667,21 +712,25 @@ public class NexflixApp {
         List<Media> tvShows = mediaService.getAllTvShows();
 
         if (tvShows.isEmpty()) {
-            ConsoleMessage.println("\nNenhum registro encontrado.\n", Ansi.Color.RED);
+            clearConsole();
+            ConsoleMessage.println("\nNenhuma série encontrada.\n", Ansi.Color.RED);
+            aperteParaContinuar();
             return;
         }
 
         while (true) {
+            clearConsole();
             ConsoleMessage.println("Séries cadastradas:");
             showMediaList(tvShows);
 
             TvShow tvShow = (TvShow) mediaService.getMediaById(InputValidator.getInteger("Escolha a série que deseja editar:"));
 
             if (tvShow == null) {
+                clearConsole();
                 ConsoleMessage.printInvalidOptionMessage();
                 break;
             }
-
+            clearConsole();
             tvShow.setTitle(InputValidator.getString("Insira o novo título da série:"));
             tvShow.setDescription(InputValidator.getString("Insira a nova descrição da série:"));
             tvShow.setDirector(InputValidator.getString("Insira o novo diretor da série:"));
@@ -709,11 +758,14 @@ public class NexflixApp {
         List<Media> tvShows = mediaService.getAllTvShows();
 
         if (tvShows.isEmpty()) {
-            ConsoleMessage.println("\nNenhum registro encontrado.\n", Ansi.Color.RED);
+            clearConsole();
+            ConsoleMessage.println("\nNenhuma série encontrada.\n", Ansi.Color.RED);
+            aperteParaContinuar();
             return;
         }
 
         while (true) {
+            clearConsole();
             ConsoleMessage.println("Séries cadastradas:");
             showMediaList(tvShows);
 
@@ -733,6 +785,7 @@ public class NexflixApp {
      */
     private void displayMovieCrudOptions() {
         while (true) {
+            clearConsole();
             ConsoleMessage.println("Escolha uma opção:");
             switch (InputValidator.getInteger(getCrudOptions())) {
                 case 1:
@@ -759,7 +812,7 @@ public class NexflixApp {
      */
     private void handleCreateMovie() {
         Movie movie = new Movie();
-
+        clearConsole();
         movie.setTitle(InputValidator.getString("Insira o título do filme:"));
         movie.setDescription(InputValidator.getString("Insira a descrição do filme:"));
         movie.setDirector(InputValidator.getString("Insira o diretor do filme:"));
@@ -782,11 +835,14 @@ public class NexflixApp {
         List<Media> movies = mediaService.getAllMovies();
 
         if (movies.isEmpty()) {
-            ConsoleMessage.println("\nNenhum registro encontrado.\n", Ansi.Color.RED);
+            clearConsole();
+            ConsoleMessage.println("\nNenhum filme encontrado.\n", Ansi.Color.RED);
+            aperteParaContinuar();
             return;
         }
 
         while (true) {
+            clearConsole();
             ConsoleMessage.println("Filmes cadastrados:");
             showMediaList(movies);
 
@@ -825,11 +881,14 @@ public class NexflixApp {
         List<Media> movies = mediaService.getAllMovies();
 
         if (movies.isEmpty()) {
-            ConsoleMessage.println("\nNenhum registro encontrado.\n", Ansi.Color.RED);
+            clearConsole();
+            ConsoleMessage.println("\nNenhum filme encontrado.\n", Ansi.Color.RED);
+            aperteParaContinuar();
             return;
         }
 
         while (true) {
+            clearConsole();
             ConsoleMessage.println("Filmes cadastrados:");
             showMediaList(movies);
 
@@ -854,7 +913,7 @@ public class NexflixApp {
     private void showMediaList(List<Media> mediaList) {
         AsciiTable table = new AsciiTable();
         table.addRule();
-
+        clearConsole();
         for (int i = 0; i < mediaList.size(); i += 3) {
             String media1 = "[" + mediaList.get(i).getId() + "] " + mediaList.get(i).getTitle();
             String media2 = (i + 1 < mediaList.size()) ? "[" + mediaList.get(i + 1).getId() + "] " + mediaList.get(i + 1).getTitle() : "";
@@ -877,7 +936,7 @@ public class NexflixApp {
      */
     private void showLoggedUserInformation() {
         AsciiTable asciiTable = new AsciiTable();
-
+        clearConsole();
         asciiTable.addRule();
         asciiTable.addRow("Nome", "E-mail");
         asciiTable.addRule();
@@ -888,6 +947,34 @@ public class NexflixApp {
 
         ConsoleMessage.println("Usuário logado:");
         ConsoleMessage.println(asciiTable.render(), Ansi.Color.GREEN);
+    }
+
+    private void watchMovie(Scanner scanner) {
+        System.out.print("Enter the movie name: ");
+        String movieName = scanner.nextLine();
+
+        if (loginService.getLoggedInUser() != null) {
+            loginService.getLoggedInUser().addWatchedMovie(movieName);
+            System.out.println("You watched: " + movieName);
+        } else {
+            System.out.println("You need to log in first.");
+        }
+    }
+
+    private void displayWatchedMovies() {
+        if (loginService.getLoggedInUser() != null) {
+            List<String> watchedMovies = loginService.getLoggedInUser().getWatchedMovies();
+            if (watchedMovies.isEmpty()) {
+                System.out.println("You haven't watched any movies yet.");
+            } else {
+                System.out.println("Watched movies:");
+                for (String movie : watchedMovies) {
+                    System.out.println("- " + movie);
+                }
+            }
+        } else {
+            System.out.println("You need to log in first.");
+        }
     }
 
     /**
@@ -950,6 +1037,17 @@ public class NexflixApp {
                 "\n[4] Voltar";
     }
 
+    public void clearConsole() {
+        for (int i = 0; i < 50; i++) {
+            System.out.println();
+        }
+    }
+    public static void aperteParaContinuar() {
+        System.out.println("Pressione para continuar...");
+        scanner.next();
+    }
+
+
     private String getFilterOptions() {
         return "[1] Ordenar por data de lançamento (decrescente)" +
                 "\n[2] Ordenar por data de lançamento (crescente)" +
@@ -957,9 +1055,8 @@ public class NexflixApp {
                 "\n[4] Filtrar por ano e avaliação mínima" +
                 "\n[5] Filtrar por Categoria" +
                 "\n[6] Filtrar por Título" +
-                "\n[7] Filtrar por Data de Lançamento" +
-                "\n[8] Filtrar por Avaliação" +
-                "\n[9] Filtrar por Diretor" +
-                "\n[10] Voltar";
+                "\n[7] Filtrar por Avaliação" +
+                "\n[8] Filtrar por Diretor" +
+                "\n[9] Voltar";
     }
 }
