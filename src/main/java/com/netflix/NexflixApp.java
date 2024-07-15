@@ -501,12 +501,14 @@ public class NexflixApp {
                 applyDirectorFilter(mediaList);
                 break;
             case 9:
+                displayMenuOptions();
                 return;
             default:
                 ConsoleMessage.printInvalidOptionMessage();
                 break;
         }
     }
+
 
     /**
      * Applies a filter function to the list of media items and displays the filtered results.
