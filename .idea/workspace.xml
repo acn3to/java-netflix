@@ -4,13 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="594b1f3b-e028-4d46-a68c-46bf0736cb80" name="Changes" comment="feat: implemented NetflixApp.searchMenu, NetflixApp.searchMovie and NetflixApp.clearConsole methods">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="25ee3813-2ba7-4030-b371-6a6b5b2838f5" name="Changes" comment="feat(entity): add Episode entity">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,11 +22,17 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="feature/date-filters" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;isaquebarisch&quot;
+  }
+}</component>
   <component name="GitToolBoxStore">
     <option name="recentBranches">
       <RecentBranches>
@@ -40,6 +41,10 @@
             <RecentBranchesForRepo>
               <option name="branches">
                 <list>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/date-filters" />
+                    <option name="lastUsedInstant" value="1721046974" />
+                  </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="feature/console-interactions" />
                     <option name="lastUsedInstant" value="1720903954" />
@@ -56,10 +61,6 @@
                     <option name="branchName" value="main" />
                     <option name="lastUsedInstant" value="1720890451" />
                   </RecentBranch>
-                  <RecentBranch>
-                    <option name="branchName" value="override-equals-method" />
-                    <option name="lastUsedInstant" value="1720829994" />
-                  </RecentBranch>
                 </list>
               </option>
               <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
@@ -69,17 +70,11 @@
       </RecentBranches>
     </option>
   </component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/acn3to/java-netflix.git",
-    "accountId": "91ef5029-81b4-46d8-a2bb-331d621846e0"
-  }
-}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
   <component name="ProjectId" id="2jAGjPjHxx7rMv3oPv6ELkOaRlU" />
-  <component name="ProjectLevelVcsManager">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
@@ -93,9 +88,10 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "improv-felipe",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/letic/codeProjects/estudos/T-Academy/java-netflix/src",
+    "node.js.selected.package.tslint": "(autodetect)",
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
@@ -120,7 +116,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="0373a71c-9d81-4fd4-9048-dcebb1c55143" name="Changes" comment="" />
+      <changelist id="25ee3813-2ba7-4030-b371-6a6b5b2838f5" name="Changes" comment="feat: add CRUD operations to the console for Movie and TvShow." />
       <created>1720822602309</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -217,17 +213,6 @@
     <option name="localTasksCounter" value="12" />
     <servers />
   </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="feat: add attributes, getters and setters to Media class" />
     <MESSAGE value="feat: add attributes, getters and setters to Movie class" />
@@ -239,6 +224,7 @@
     <MESSAGE value="feat: added the first interactions with user via console: login and user creation" />
     <MESSAGE value="feat: made all the basic logic to select and watch movies and series." />
     <MESSAGE value="docs: add documentation to methods from NetflixApp." />
-    <option name="LAST_COMMIT_MESSAGE" value="docs: add documentation to methods from NetflixApp." />
+    <MESSAGE value="feat(entity): add Episode entity" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(entity): add Episode entity" />
   </component>
 </project>
