@@ -11,6 +11,7 @@ public class User {
     private String password;
     private boolean isAdmin;
     private List<Profile> profiles; // ---------------------------------
+    private List<String> watchedMovies;
 
     public User(int id, String name, String email, String password, boolean isAdmin) {
         this.id = id;
@@ -19,6 +20,7 @@ public class User {
         this.password = password;
         this.isAdmin = isAdmin;
         this.profiles = new ArrayList<>();  // ---------------------------------
+        this.watchedMovies = new ArrayList<>();
     }
 
     public User(String name, String email, String password) {
@@ -75,6 +77,14 @@ public class User {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public void addWatchedMovie(String movieName) {
+        watchedMovies.add(movieName);
+    }
+
+    public List<String> getWatchedMovies() {
+        return watchedMovies;
     }
 
 
