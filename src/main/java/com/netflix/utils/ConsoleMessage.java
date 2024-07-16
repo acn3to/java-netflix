@@ -108,7 +108,7 @@ public class ConsoleMessage {
      * @param totalTime     The total time of the media in seconds.
      */
     public static void printTv(String title, boolean isPaused, int elapsedTime, int totalTime) {
-        String status = isPaused ? "PAUSED" : "PLAYING";
+        String status = isPaused ? "PAUSED-" : "PLAYING";
         String elapsedTimeFormatted = Formatter.formatTime(elapsedTime);
         String totalTimeFormatted = Formatter.formatTime(totalTime);
 
@@ -126,7 +126,7 @@ public class ConsoleMessage {
         System.out.println("│    | .-------------------------------------. |   │");
         System.out.println("│    | |--.__.--.__.-------------------------| |   │");
         System.out.println("│    | |--.__.--.__.-------------------------| |   │");
-        System.out.println("│    | |--.-" + formattedStatusLine + "---- --| |   │");
+        System.out.println("│    | |--.-" + formattedStatusLine + "--| |   │");
         System.out.println("│    | |--.__.--.__.-------------------------| |   │");
         System.out.println("│    | |--.__.--.__.-------------------------| |   │");
         System.out.println("│    | '-------------------------------------'o|   │");
