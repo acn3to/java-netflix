@@ -202,7 +202,6 @@ public class NexflixApp {
         clearConsole();
         if (movies.isEmpty()) {
             ConsoleMessage.println("\nNenhum filme encontrado.\n", Ansi.Color.RED);
-            aperteParaContinuar();
             return;
         }
 

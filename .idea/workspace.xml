@@ -5,13 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="25ee3813-2ba7-4030-b371-6a6b5b2838f5" name="Changes" comment="feat(entity): add Episode entity">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/netflix/utils/Formatter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/NexflixApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/entities/TvShow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/entities/TvShow.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/services/MediaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/services/MediaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/netflix/utils/ConsoleMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/netflix/utils/ConsoleMessage.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,6 +70,9 @@
       </RecentBranches>
     </option>
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectColorInfo">{
     &quot;associatedIndex&quot;: 1
     }</component>
@@ -94,7 +91,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "register__media",
+    "git-widget-placeholder": "feature/profiles-as-principal-menu",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/letic/codeProjects/estudos/T-Academy/java-netflix/src",
     "node.js.selected.package.tslint": "(autodetect)",
