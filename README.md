@@ -11,7 +11,8 @@
 - [Funcionalidades Principais](#-funcionalidades-principais)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Como Utilizar](#-como-utilizar)
-- [Autor](#-autor)
+- [Instalação](#-instalação)
+- [Autoria](#-autoria)
 
 ## 📖 Descrição
 
@@ -26,6 +27,8 @@ O projeto de simulador de Netflix, em Java, permite gerenciar e filtrar filmes e
 - **Atualização de Informações:** Capacidade de atualizar informações como título, diretor, categoria e avaliação de uma mídia existente.
 - **Visualização Detalhada:** Visualizar detalhes completos de uma mídia específica, incluindo sinopse, elenco e outras informações relevantes.
 - **Ver Filmes ou Séries:** Opção para visualizar informações detalhadas de filmes ou séries disponíveis no catálogo.
+- **Login e Criação de Usuário:** Funcionalidades básicas de autenticação de usuário, permitindo o login e a criação de novos usuários no sistema.
+
 
 ## 🚀 Estrutura do Projeto
 
@@ -36,14 +39,20 @@ O projeto é estruturado com base nos princípios de orientação a objetos e pa
 **Pré-requisitos:**
 - JDK 8 ou superior instalado.
 - IDE Java (como IntelliJ IDEA, Eclipse) para execução do código.
+  
+## 🔍 Instalação
 
-**Instruções:**
-1. Clone o repositório do GitHub.
-   ```bash
-   git clone  https://github.com/acn3to/java-netflix
-Executando o projeto
+Siga os passos abaixo para simular:
+
+**Clonando o Repositório**
+
+```bash
+git clone  https://github.com/acn3to/java-netflix
+```
+
+**Executando o projeto**
 
 Abra o projeto em uma IDE e execute o arquivo Main, siga as instruções no terminal.
 
-✍🏻 Autor
-Desenvolvido por Letícia Borchardt , Isaque Barisch, Arnaldo, Erick e Felipe.
+## ✍🏻 Autoria
+Desenvolvido por Letícia Borchardt , Isaque Santos Barisch, Arnaldo Costa Neto, Erick Amorim de Carvalho e Felipe Rodrigo de Souza Gonçalves.
