@@ -7,7 +7,7 @@ public class Profile {
     private int id;
     private String name;
     private User owner;
-    private List<Media> myList = new ArrayList<>();
+    private final List<Media> myList = new ArrayList<>();
 
     public Profile(int id, String name, User owner) {
         this.id = id;

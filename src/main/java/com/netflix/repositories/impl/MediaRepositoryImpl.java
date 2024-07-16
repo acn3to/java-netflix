@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MediaRepositoryImpl implements MediaRepository {
-    private List<Media> medias = new ArrayList<>();
+    private final List<Media> medias = new ArrayList<>();
     private int idMedia = 1;
 
     @Override

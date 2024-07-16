@@ -39,12 +39,11 @@ public class Formatter {
      * @return A formatted string representing the status line.
      */
     public static String formatStatusLine(String status) {
-        String formattedStatus = " " + status + " ";
-        int statusWidth = formattedStatus.length();
+        int statusWidth = status.length();
         int spaces = STATUS_SPACES - statusWidth;
 
         return "-".repeat(Math.max(0, spaces)) +
-                formattedStatus +
+                status +
                 "-".repeat(Math.max(0, spaces));
     }
 }

@@ -2,7 +2,6 @@ package com.netflix.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class User {
     private int id;
@@ -10,7 +9,7 @@ public class User {
     private String email;
     private String password;
     private boolean isAdmin;
-    private List<Profile> profiles;
+    private final List<Profile> profiles;
     private List<String> watchedMovies;
 
     public User(int id, String name, String email, String password, boolean isAdmin) {
@@ -86,7 +85,6 @@ public class User {
     public List<String> getWatchedMovies() {
         return watchedMovies;
     }
-
 
     @Override
     public String toString() {

@@ -14,7 +14,6 @@ import org.fusesource.jansi.Ansi;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Scanner;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Supplier;
@@ -23,7 +22,6 @@ public class NexflixApp {
     private final LoginService loginService;
     private final UserService userService;
     private final MediaService mediaService;
-    static Scanner scanner = new Scanner(System.in);
     private boolean hasFilters;
     private boolean continueFilter;
 
@@ -121,8 +119,9 @@ public class NexflixApp {
         boolean showAdminOptions = loginService.getLoggedInUser().isAdmin();
 
         while (true) {
+            clearConsole();
             showLoggedUserInformation();
-            ConsoleMessage.println("Navegue pelas opções abaixo:");
+            ConsoleMessage.println("Escolha uma opção:");
 
             switch (InputValidator.getInteger(getMenuOptions())) {
                 case 1:
@@ -139,26 +138,11 @@ public class NexflixApp {
                     }
                     createProfile();
                     break;
-//                case 11:
-//                    removeProfile();
-//                    break;
-//                case 2:
-//                    displayMediaListOptions(mediaService.getAllTvShows());
-//                    break;
-
-
-
-//                ADICIONAR OPÇÃO DE VER HISTÓRICO DE FILMES AQUI:
-//              case 3:
-//                  displayWatchedMovies();
-//                  break;
-//
                 case 3:
                     if (showAdminOptions) {
                         displayMovieCrudOptions();
                         break;
                     }
-
                     removeProfile();
                     return;
                 case 4:
@@ -166,22 +150,20 @@ public class NexflixApp {
                         displayTvShowCrudOptions();
                         break;
                     }
-
                     return;
                 case 5:
                     if (showAdminOptions) {
                         loginService.logout();
                         return;
                     }
-
                     ConsoleMessage.printInvalidOptionMessage();
                     break;
                 case 6:
                     if (loginService.getLoggedInUser() != null && !(showAdminOptions)) {
+                        clearConsole();
                         displayProfileOptions();
                         break;
                     }
-
                     ConsoleMessage.printInvalidOptionMessage();
                     break;
                 default:
@@ -191,66 +173,6 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Displays the list of movies and provides options to the user.<p>
-     * Options include selecting a movie to view its details or exiting the list.
-     * If no movies are available, a message is displayed and the method returns.
-     * The loop continues until the user chooses to exit.
-     */
-    private void displayMovieListOptions() {
-        List<Media> movies = mediaService.getAllMovies();
-        clearConsole();
-        if (movies.isEmpty()) {
-            ConsoleMessage.println("\nNenhum filme encontrado.\n", Ansi.Color.RED);
-            return;
-        }
-
-        while (true) {
-            clearConsole();
-            ConsoleMessage.printMovieCatalogTitle();
-            showMediaList(movies);
-
-            switch (InputValidator.getInteger(getMediaListOptions())) {
-                case 1:
-                    Media movie = mediaService.getMediaById(InputValidator.getInteger("Escolha um filme (número)"));
-
-                    if (movie == null) {
-                        ConsoleMessage.printInvalidOptionMessage();
-                        break;
-                    }
-
-                    displayMediaOptions(movie);
-                    break;
-                case 2:
-                    return;
-                default:
-                    ConsoleMessage.printInvalidOptionMessage();
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Displays the list of tv shows and provides options to the user.<p>
-     * Options include selecting a tv show to view its details or exiting the list.
-     * If no tv shows are available, a message is displayed and the method returns.
-     * The loop continues until the user chooses to exit.
-     */
-    private void displayTvShowListOptions() {
-        List<Media> tvShows = mediaService.getAllTvShows();
-
-        if (tvShows.isEmpty()) {
-            clearConsole();
-            ConsoleMessage.println("\nNenhuma série encontrada.\n", Ansi.Color.RED);
-            return;
-        }
-
-        while (true) {
-            clearConsole();
-            ConsoleMessage.printTvShowCatalogTitle();
-            showMediaList(tvShows);
-        }
-    }
     /**
      * Displays options for interacting with a list of media items.
      * Allows selection of media, filtering, resetting filters, or exiting.
@@ -324,11 +246,10 @@ public class NexflixApp {
      */
     private void displayTvShowSeasonsOptions(TvShow tvShow) {
         List<Episode> episodeList;
-        boolean selectingSeason = true;
 
-        while (selectingSeason) {
+        while (true) {
             ConsoleMessage.println("Escolha uma temporada:");
-            tvShow.getSeasons().forEach((season, episodes) -> {
+            tvShow.getSeasons().forEach((season, _) -> {
                 ConsoleMessage.println("[" + season + "] Temporada " + season);
             });
 
@@ -339,8 +260,6 @@ public class NexflixApp {
             if (episodeList == null) {
                 ConsoleMessage.printInvalidOptionMessage();
             } else {
-                selectingSeason = false;
-
                 while (true) {
                     ConsoleMessage.println("Escolha um episódio:");
                     for (int i = 0; i < episodeList.size(); i++) {
@@ -360,19 +279,12 @@ public class NexflixApp {
         }
     }
 
-
     /**
-     * Displays options for watching a media item, such as a movie or TV show.
-     * Allows the user to toggle between playing and pausing the media.
-     * <p>
-     * The method loops indefinitely until the user chooses to exit.
-     * <p>
-     * Options include:
-     * 1. Toggle between play and pause.
-     * 2. Return to the previous menu.
+     * Displays options for watching a media item (movie or episode), including pause/resume and exit.
+     * Logs "Fim do episódio." or "Fim do filme." when the media reaches its end.
      *
-     * @param media   The selected media item (Movie or TvShow).
-     * @param episode The selected episode to watch (null if watching a movie).
+     * @param media   The media item being watched (either Movie or Episode).
+     * @param episode The episode being watched, if applicable.
      */
     private void displayWatchingOptions(Media media, Episode episode) {
         boolean isPaused = false;
@@ -384,15 +296,17 @@ public class NexflixApp {
         while (true) {
             elapsedTime = isPaused ? pauseStartTime - startWatchingTime : (int) (System.currentTimeMillis() / 1000) - startWatchingTime;
 
+            String endMessage = (episode != null) ? "Fim do episódio." : "Fim do filme.";
+
             if (!isPaused && episode != null) {
                 if (elapsedTime >= totalTime) {
-                    ConsoleMessage.println("Fim do episódio.");
+                    ConsoleMessage.println(endMessage);
                     return;
                 }
                 ConsoleMessage.printTv(Formatter.formatTitle(episode.getTitle()), isPaused, elapsedTime, totalTime);
             } else if (!isPaused && media instanceof Movie) {
                 if (elapsedTime >= totalTime) {
-                    ConsoleMessage.println("Fim do filme.");
+                    ConsoleMessage.println(endMessage);
                     return;
                 }
                 ConsoleMessage.printTv(Formatter.formatTitle(media.getTitle()), isPaused, elapsedTime, totalTime);
@@ -423,10 +337,10 @@ public class NexflixApp {
 
             elapsedTime = isPaused ? pauseStartTime - startWatchingTime : (int) (System.currentTimeMillis() / 1000) - startWatchingTime;
             if (!isPaused && episode != null && elapsedTime >= totalTime) {
-                ConsoleMessage.println("Fim do episódio.");
+                ConsoleMessage.println(endMessage);
                 return;
             } else if (!isPaused && media instanceof Movie && elapsedTime >= totalTime) {
-                ConsoleMessage.println("Fim do filme.");
+                ConsoleMessage.println(endMessage);
                 return;
             }
         }
@@ -456,21 +370,11 @@ public class NexflixApp {
      */
     private void handleMediaListOption(int option, List<Media> mediaList, boolean isListOfMovies) {
         switch (option) {
-            case 1:
-                handleSelectMedia();
-                break;
-            case 2:
-                displayFilterOptions(mediaList);
-                break;
-            case 3:
-                resetFilters(isListOfMovies);
-                break;
-            case 4:
-                exitMediaList();
-                break;
-            default:
-                ConsoleMessage.printInvalidOptionMessage();
-                break;
+            case 1 -> handleSelectMedia();
+            case 2 -> displayFilterOptions(mediaList);
+            case 3 -> resetFilters(isListOfMovies);
+            case 4 -> exitMediaList();
+            default -> ConsoleMessage.printInvalidOptionMessage();
         }
     }
 
@@ -536,39 +440,18 @@ public class NexflixApp {
      */
     private void handleFilterOption(int option, List<Media> mediaList) {
         switch (option) {
-            case 1:
-                applyFilterAndDisplay(() -> mediaService.filterReleaseDateInDescendingOrder(mediaList));
-                break;
-            case 2:
-                applyFilterAndDisplay(() -> mediaService.filterReleaseDateInAscendingOrder(mediaList));
-                break;
-            case 3:
-                applyDateRangeFilter(mediaList);
-                break;
-            case 4:
-                applyYearAndRatingFilter(mediaList);
-                break;
-            case 5:
-                applyCategoryFilter(mediaList);
-                break;
-            case 6:
-                applyTitleFilter(mediaList);
-                break;
-            case 7:
-                applyRatingFilter(mediaList);
-                break;
-            case 8:
-                applyDirectorFilter(mediaList);
-                break;
-            case 10:
-            case 9:
-                displayMenuOptions();
-                return;
-            default:
-                ConsoleMessage.printInvalidOptionMessage();
-                break;}
+            case 1 -> applyFilterAndDisplay(() -> mediaService.filterReleaseDateInDescendingOrder(mediaList));
+            case 2 -> applyFilterAndDisplay(() -> mediaService.filterReleaseDateInAscendingOrder(mediaList));
+            case 3 -> applyDateRangeFilter(mediaList);
+            case 4 -> applyYearAndRatingFilter(mediaList);
+            case 5 -> applyCategoryFilter(mediaList);
+            case 6 -> applyTitleFilter(mediaList);
+            case 7 -> applyRatingFilter(mediaList);
+            case 8 -> applyDirectorFilter(mediaList);
+            case 9 -> displayMenuOptions();
+            default -> ConsoleMessage.printInvalidOptionMessage();
+        }
     }
-
 
     /**
      * Applies a filter function to the list of media items and displays the filtered results.
@@ -621,11 +504,11 @@ public class NexflixApp {
     }
 
     /**
-     * Solicita ao usuário que insira uma categoria e filtra a lista de itens de mídia por essa categoria.
-     * Exibe todas as categorias disponíveis com índices para seleção pelo usuário.
-     * Define a flag {@code hasFilters} como true.
+     * Prompts the user to enter a category and filters the media item list by that category.
+     * Displays all available categories with indices for user selection.
+     * Sets the {@code hasFilters} flag to true.
      *
-     * @param mediaList A lista de itens de mídia para filtrar por categoria.
+     * @param mediaList The list of media items to filter by category.
      */
     private void applyCategoryFilter(List<Media> mediaList) {
         this.hasFilters = true;
@@ -639,17 +522,17 @@ public class NexflixApp {
         ConsoleMessage.println("[7] Drama");
         ConsoleMessage.println("[8] Romance");
 
-        boolean categoriaValida = false;
-        Category categoriaSelecionada = null;
+        boolean validCategory = false;
+        Category selectedCategory = null;
 
-        while (!categoriaValida) {
+        while (!validCategory) {
             try {
-                String indiceCategoriaStr = InputValidator.getString("Selecione a categoria pelo número:");
-                int indiceCategoria = Integer.parseInt(indiceCategoriaStr);
+                String categoryIndexString = InputValidator.getString("Selecione a categoria pelo número:");
+                int categoryIndex = Integer.parseInt(categoryIndexString);
 
-                if (indiceCategoria >= 1 && indiceCategoria <= 8) {
-                    categoriaSelecionada = Category.values()[indiceCategoria - 1];
-                    categoriaValida = true;
+                if (categoryIndex >= 1 && categoryIndex <= 8) {
+                    selectedCategory = Category.values()[categoryIndex - 1];
+                    validCategory = true;
                 } else {
                     ConsoleMessage.println("Número de categoria inválido! Por favor, selecione um número válido.", Ansi.Color.RED);
                 }
@@ -658,28 +541,27 @@ public class NexflixApp {
             }
         }
 
-        displayMediaListOptions(mediaService.filterByCategory(mediaList, categoriaSelecionada));
+        displayMediaListOptions(mediaService.filterByCategory(mediaList, selectedCategory));
     }
 
-
     /**
-     * Solicita ao usuário que digite um título e filtra a lista de itens de mídia por esse título.
-     * Define a flag {@code hasFilters} como true.
+     * Prompts the user to enter a title and filters the media item list by that title.
+     * Sets the {@code hasFilters} flag to true.
      *
-     * @param mediaList A lista de itens de mídia para filtrar por título.
+     * @param mediaList The list of media items to filter by title.
      */
     private void applyTitleFilter(List<Media> mediaList) {
         this.hasFilters = true;
 
         ConsoleMessage.println("Digite o título para filtrar:");
 
-        String titulo = InputValidator.getString("Título: ");
-        List<Media> mediaFiltrada = mediaService.filterByTitle(mediaList, titulo);
+        String title = InputValidator.getString("Título: ");
+        List<Media> filteredMedia = mediaService.filterByTitle(mediaList, title);
 
-        if (mediaFiltrada.isEmpty()) {
+        if (filteredMedia.isEmpty()) {
             ConsoleMessage.println("Nenhum item encontrado com o título especificado.", Ansi.Color.RED);
         } else {
-            displayMediaListOptions(mediaFiltrada);
+            displayMediaListOptions(filteredMedia);
         }
     }
 
@@ -697,46 +579,41 @@ public class NexflixApp {
     }
 
     /**
-     * Solicita ao usuário que selecione um diretor da lista mostrada e filtra a lista de itens de mídia por esse diretor.
-     * Define a flag {@code hasFilters} como true.
+     * Prompts the user to select a director from the displayed list and filters the media item list by that director.
+     * Sets the {@code hasFilters} flag to true.
      *
-     * @param mediaList A lista de itens de mídia para filtrar por diretor.
+     * @param mediaList The list of media items to filter by director.
      */
     private void applyDirectorFilter(List<Media> mediaList) {
         this.hasFilters = true;
 
         ConsoleMessage.println("Digite o nome do diretor para filtrar:");
 
-        String diretor = InputValidator.getString("Diretor: ");
-        List<Media> mediaFiltrada = mediaService.filterByDirector(mediaList, diretor);
+        String director = InputValidator.getString("Diretor: ");
+        List<Media> filteredMedia = mediaService.filterByDirector(mediaList, director);
 
-        if (mediaFiltrada.isEmpty()) {
+        if (filteredMedia.isEmpty()) {
             ConsoleMessage.println("Nenhum item encontrado com o diretor especificado.", Ansi.Color.RED);
         } else {
-            displayMediaListOptions(mediaFiltrada);
+            displayMediaListOptions(filteredMedia);
         }
     }
 
-
+    /**
+     * Displays CRUD options for TV shows and continues prompting until the user chooses to exit.
+     */
     private void displayTvShowCrudOptions() {
         while (true) {
             clearConsole();
             ConsoleMessage.println("Escolha uma opção:");
             switch (InputValidator.getInteger(getCrudOptions())) {
-                case 1:
-                    handleCreateTvShow();
-                    break;
-                case 2:
-                    handleEditTvShow();
-                    break;
-                case 3:
-                    handleDeleteTvShow();
-                    break;
-                case 4:
+                case 1 -> handleCreateTvShow();
+                case 2 -> handleEditTvShow();
+                case 3 -> handleDeleteTvShow();
+                case 4 -> {
                     return;
-                default:
-                    ConsoleMessage.printInvalidOptionMessage();
-                    break;
+                }
+                default -> ConsoleMessage.printInvalidOptionMessage();
             }
         }
     }
@@ -856,20 +733,13 @@ public class NexflixApp {
             clearConsole();
             ConsoleMessage.println("Escolha uma opção:");
             switch (InputValidator.getInteger(getCrudOptions())) {
-                case 1:
-                    handleCreateMovie();
-                    break;
-                case 2:
-                    handleEditMovie();
-                    break;
-                case 3:
-                    handleDeleteMovie();
-                    break;
-                case 4:
+                case 1 -> handleCreateMovie();
+                case 2 -> handleEditMovie();
+                case 3 -> handleDeleteMovie();
+                case 4 -> {
                     return;
-                default:
-                    ConsoleMessage.printInvalidOptionMessage();
-                    break;
+                }
+                default -> ConsoleMessage.printInvalidOptionMessage();
             }
         }
     }
@@ -1008,39 +878,10 @@ public class NexflixApp {
         asciiTable.addRule();
         asciiTable.addRow(loginService.getLoggedInUser().getName(), loginService.getLoggedInUser().getEmail());
         asciiTable.addRule();
-
         asciiTable.setTextAlignment(TextAlignment.CENTER);
 
         ConsoleMessage.println("Usuário logado:");
         ConsoleMessage.println(asciiTable.render(), Ansi.Color.GREEN);
-    }
-
-    private void watchMovie(Scanner scanner) {
-        System.out.print("Enter the movie name: ");
-        String movieName = scanner.nextLine();
-
-        if (loginService.getLoggedInUser() != null) {
-            loginService.getLoggedInUser().addWatchedMovie(movieName);
-            System.out.println("You watched: " + movieName);
-        } else {
-            System.out.println("You need to log in first.");
-        }
-    }
-
-    private void displayWatchedMovies() {
-        if (loginService.getLoggedInUser() != null) {
-            List<String> watchedMovies = loginService.getLoggedInUser().getWatchedMovies();
-            if (watchedMovies.isEmpty()) {
-                System.out.println("You haven't watched any movies yet.");
-            } else {
-                System.out.println("Watched movies:");
-                for (String movie : watchedMovies) {
-                    System.out.println("- " + movie);
-                }
-            }
-        } else {
-            System.out.println("You need to log in first.");
-        }
     }
 
     /**
@@ -1062,15 +903,11 @@ public class NexflixApp {
                     "[4] Gerenciar séries\n" +
                     "[5] Logout";
         } else {
-            defaultOptions += "[1] Selecionar perfil \n" +
-                    "[2] Criar perfil \n" +
-                    "[3] Excluir perfil \n" +
+            defaultOptions = "[1] Selecionar perfil\n" +
+                    "[2] Criar perfil\n" +
+                    "[3] Excluir perfil\n" +
                     "[4] Logout";
-            if (loginService.getLoggedInUser() != null && (!loginService.getLoggedInUser().isAdmin())) {
-            }
-        //    defaultOptions = defaultOptions + "\n[3] Logout";
         }
-
 
         return defaultOptions;
     }
@@ -1104,50 +941,62 @@ public class NexflixApp {
      * @return A formatter string of options for CRUD operations
      */
     private String getCrudOptions() {
-        return "[1] Cadastrar" +
-                "\n[2] Editar" +
-                "\n[3] Excluir" +
-                "\n[4] Voltar";
+        return "[1] Cadastrar\n" +
+                "[2] Editar\n" +
+                "[3] Excluir\n" +
+                "[4] Voltar";
     }
 
+    /**
+     * Clears the console by printing 50 empty lines.
+     */
     public void clearConsole() {
         for (int i = 0; i < 50; i++) {
             System.out.println();
         }
     }
 
+    /**
+     * Returns filter options for media items with each option on a new line.
+     *
+     * @return Filter options string
+     */
     private String getFilterOptions() {
-        return "[1] Ordenar por data de lançamento (decrescente)" +
-                "\n[2] Ordenar por data de lançamento (crescente)" +
-                "\n[3] Filtrar por intervalo de datas" +
-                "\n[4] Filtrar por ano e avaliação mínima" +
-                "\n[5] Filtrar por Categoria" +
-                "\n[6] Filtrar por Título" +
-                "\n[7] Filtrar por Avaliação" +
-                "\n[8] Filtrar por Diretor" +
-                "\n[9] Voltar";
+        return "[1] Ordenar por data de lançamento (decrescente)\n" +
+                "[2] Ordenar por data de lançamento (crescente)\n" +
+                "[3] Filtrar por intervalo de datas\n" +
+                "[4] Filtrar por ano e avaliação mínima\n" +
+                "[5] Filtrar por Categoria\n" +
+                "[6] Filtrar por Título\n" +
+                "[7] Filtrar por Avaliação\n" +
+                "[8] Filtrar por Diretor\n" +
+                "[9] Voltar";
     }
 
+    /**
+     * Displays options related to profiles and continues prompting until the user chooses to exit.
+     */
     private void displayProfileOptions() {
         while (true) {
             ConsoleMessage.println("Escolha uma opção:");
             switch (InputValidator.getInteger(getProfileOptions())) {
-                case 1:
-                    selectProfile();
-                    break;
-                case 2:
-                    createProfile();
-                    break;
-                case 3:
+                case 1 -> selectProfile();
+                case 2 -> createProfile();
+                case 3 -> {
                     return;
-                default:
-                    ConsoleMessage.printInvalidOptionMessage();
-                    break;
+                }
+                default -> ConsoleMessage.printInvalidOptionMessage();
             }
         }
     }
 
+    /**
+     * Creates a new profile for the logged-in user.
+     * Prompts the user to enter a profile name and handles profile creation.
+     * Displays success message upon successful creation or error message if an exception occurs.
+     */
     private void createProfile() {
+        clearConsole();
         ConsoleMessage.println("------------------------\nCriar novo perfil\n------------------------");
 
         try {
@@ -1158,7 +1007,8 @@ public class NexflixApp {
 
             String name = InputValidator.getString("Digite o nome do perfil:");
             User user = loginService.getLoggedInUser();
-            int profileId = userService.getNextProfileId(user.getId()); // Obter o próximo ID disponível
+
+            int profileId = userService.getNextProfileId(user.getId());
 
             Profile profile = new Profile(profileId, name, user);
             userService.addProfileToUser(user.getId(), profile);
@@ -1169,53 +1019,41 @@ public class NexflixApp {
         }
     }
 
-    private void listProfiles() {
-        ConsoleMessage.println("------------------------\nTodos os Perfis\n------------------------");
-
-        try {
-            if (loginService.getLoggedInUser() == null) {
-                ConsoleMessage.printInvalidOptionMessage();
-                return;
-            }
-
-            User user = loginService.getLoggedInUser();
-            List<Profile> profiles = userService.getProfilesByUserId(user.getId());
-
-            if (profiles.isEmpty()) {
-                ConsoleMessage.println("Nenhum perfil encontrado.", Ansi.Color.RED);
-                return;
-            }
-
-            AsciiTable table = new AsciiTable();
-            table.addRule();
-            table.addRow("ID", "Nome");
-            table.addRule();
-
-            for (Profile profile : profiles) {
-                table.addRow(profile.getId(), profile.getName());
-            }
-
-            table.addRule();
-            table.setTextAlignment(TextAlignment.LEFT);
-            ConsoleMessage.println(table.render());
-        } catch (Exception e) {
-            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+    /**
+     * Allows the logged-in user to select a profile from their available profiles.
+     * Displays a list of profiles associated with the user and prompts for profile selection by ID.
+     * Upon selecting a profile, displays a success message and proceeds to display profile-specific options.
+     * Handles errors by displaying error messages.
+     */
+    private void selectProfile() {
+        Profile profile = retrieveSelectedProfile();
+        if (profile != null) {
+            clearConsole();
+            ConsoleMessage.println("Perfil selecionado: " + profile.getName());
+            displayProfileSpecificOptions(profile);
         }
     }
 
-    private void selectProfile() {
+    /**
+     * Retrieves a profile selected by the logged-in user.
+     * Displays a list of profiles associated with the user and prompts for profile selection by ID.
+     * Handles errors by displaying error messages.
+     *
+     * @return The selected profile, or null if no valid profile is selected.
+     */
+    private Profile retrieveSelectedProfile() {
         try {
             User user = loginService.getLoggedInUser();
             if (user == null) {
                 ConsoleMessage.printInvalidOptionMessage();
-                return;
+                return null;
             }
 
             List<Profile> profiles = userService.getProfilesByUserId(user.getId());
 
             if (profiles.isEmpty()) {
                 ConsoleMessage.println("Nenhum perfil encontrado.", Ansi.Color.RED);
-                return;
+                return null;
             }
 
             ConsoleMessage.println("Escolha um perfil:");
@@ -1226,25 +1064,37 @@ public class NexflixApp {
 
             if (profile == null) {
                 ConsoleMessage.printInvalidOptionMessage();
-                return;
+                return null;
             }
 
-            ConsoleMessage.println("Perfil selecionado: " + profile.getName());
-
-            displayProfileSpecificOptions(profile);
+            return profile;
 
         } catch (Exception e) {
             ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
+            return null;
         }
     }
 
-
+    /**
+     * Returns a formatted string with profile options.
+     * Options include selecting a profile, creating a new profile, and returning to the previous menu.
+     * @return The formatted string with profile options.
+     */
     private String getProfileOptions() {
-        return "[1] Selecionar perfil\n" +
-                "[2] Criar perfil\n" +
-                "[3] Voltar\n";
+        return """
+            [1] Selecionar perfil\n
+            [2] Criar perfil\n
+            [3] Voltar\n
+            """;
     }
 
+    /**
+     * Adds a selected media to the personal list of a given profile.
+     * Displays a list of available media for selection and prompts the user to enter the ID of the media to add.
+     * If successful, updates the user's profile with the selected media.
+     *
+     * @param profile The profile to which the media will be added.
+     */
     private void addMediaToMyList(Profile profile) {
         try {
             List<Media> mediaList = mediaService.getAllMedia();
@@ -1269,6 +1119,15 @@ public class NexflixApp {
         }
     }
 
+
+    /**
+     * Removes a selected media from the personal list of a given profile.
+     * Displays the current list of media in the profile's personal list for selection,
+     * prompts the user to enter the ID of the media to remove.
+     * If successful, updates the user's profile by removing the selected media.
+     *
+     * @param profile The profile from which the media will be removed.
+     */
     private void removeMediaFromMyList(Profile profile) {
         try {
             List<Media> myList = userService.getProfileMyList(loginService.getLoggedInUser().getId(), profile.getId());
@@ -1279,7 +1138,6 @@ public class NexflixApp {
             }
 
             ConsoleMessage.println("Escolha uma mídia para remover da lista:");
-
             for (Media media : myList) {
                 ConsoleMessage.println("[" + media.getId() + "] " + media.getTitle());
             }
@@ -1299,6 +1157,14 @@ public class NexflixApp {
         }
     }
 
+
+    /**
+     * Displays the list of media items in the personal list of a given profile.
+     * Retrieves and displays the current list of media in the profile's personal list.
+     * If the list is empty, informs the user that the list is empty.
+     *
+     * @param profile The profile whose media list will be viewed.
+     */
     private void viewMyList(Profile profile) {
         try {
             List<Media> myList = userService.getProfileMyList(loginService.getLoggedInUser().getId(), profile.getId());
@@ -1315,13 +1181,13 @@ public class NexflixApp {
         }
     }
 
-    private String getMyListOptions() {
-        return "[1] Adicionar mídia à lista\n" +
-                "[2] Remover mídia da lista\n" +
-                "[3] Ver minha lista\n" +
-                "[4] Voltar";
-    }
-
+    /**
+     * Displays profile-specific options for a given profile.
+     * Options include viewing catalogs, adding and removing media from lists,
+     * and viewing the user's personal media list.
+     *
+     * @param profile The profile for which options are displayed.
+     */
     private void displayProfileSpecificOptions(Profile profile) {
         while (true) {
             ConsoleMessage.println("Escolha uma opção:");
@@ -1334,64 +1200,33 @@ public class NexflixApp {
 
             int option = InputValidator.getInteger("Digite a opção desejada:");
             switch (option) {
-                case 1:
-                    displayMediaListOptions(mediaService.getAllMovies());
-                    break;
-                case 2:
-                    displayMediaListOptions(mediaService.getAllTvShows());
-                    break;
-                case 3:
-                    addMediaToMyList(profile);
-                    break;
-                case 4:
-                    removeMediaFromMyList(profile);
-                    break;
-                case 5:
-                    viewMyList(profile);
-                    break;
-                case 6:
+                case 1 -> displayMediaListOptions(mediaService.getAllMovies());
+                case 2 -> displayMediaListOptions(mediaService.getAllTvShows());
+                case 3 -> addMediaToMyList(profile);
+                case 4 -> removeMediaFromMyList(profile);
+                case 5 -> viewMyList(profile);
+                case 6 -> {
                     return;
-                default:
-                    ConsoleMessage.printInvalidOptionMessage();
-                    break;
+                }
+                default -> ConsoleMessage.printInvalidOptionMessage();
             }
         }
     }
 
+    /**
+     * Removes a profile selected by the logged-in user.
+     * Displays a list of profiles associated with the user and prompts for profile selection by ID.
+     * Upon successful removal, displays a success message. Handles errors by displaying error messages.
+     */
     private void removeProfile() {
-        try {
-            User user = loginService.getLoggedInUser();
-            if (user == null) {
-                ConsoleMessage.printInvalidOptionMessage();
-                return;
+        Profile profile = retrieveSelectedProfile();
+        if (profile != null) {
+            try {
+                userService.removeProfile(loginService.getLoggedInUser().getId(), profile.getId());
+                ConsoleMessage.println("Perfil removido com sucesso.", Ansi.Color.GREEN);
+            } catch (Exception e) {
+                ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
             }
-
-            List<Profile> profiles = userService.getProfilesByUserId(user.getId());
-
-            if (profiles.isEmpty()) {
-                ConsoleMessage.println("Nenhum perfil encontrado.", Ansi.Color.RED);
-                return;
-            }
-
-            ConsoleMessage.println("Escolha um perfil:");
-            profiles.forEach(profile -> ConsoleMessage.println("[" + profile.getId() + "] " + profile.getName()));
-
-            int profileId = InputValidator.getInteger("Digite o ID do perfil:");
-            Profile profile = userService.getProfileById(user.getId(), profileId);
-
-            if (profile == null) {
-                ConsoleMessage.printInvalidOptionMessage();
-                return;
-            }
-
-            System.out.println("id: " + profileId);
-
-            userService.removeProfile(loginService.getLoggedInUser().getId(), profile.getId());
-
-            // Adicione uma mensagem de confirmação
-            ConsoleMessage.println("Perfil removido com sucesso.", Ansi.Color.GREEN);
-        } catch (Exception e) {
-            ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
         }
     }
 }
