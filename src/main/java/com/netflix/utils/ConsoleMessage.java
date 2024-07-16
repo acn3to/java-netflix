@@ -100,46 +100,41 @@ public class ConsoleMessage {
     }
 
     /**
-     * Prints a drawing of a TV, with watching status
+     * Prints a TV or movie message to the console with dynamic status (ASSISTINDO or PAUSADO).
+     *
+     * @param title         The title of the episode or movie.
+     * @param isPaused      Whether the media is paused or not.
+     * @param elapsedTime   The elapsed time in seconds.
+     * @param totalTime     The total time of the media in seconds.
      */
-    public static void printTvRunning() {
-        ConsoleMessage.println("               o\n" +
-                "          o    |\n" +
-                "           \\   |\n" +
-                "            \\  |\n" +
-                "             \\.|-.\n" +
-                "             (\\|  )\n" +
-                "    .==================.\n" +
-                "    | .--------------. |\n" +
-                "    | |--.__.--.__.--| |\n" +
-                "    | |--.__.--.__.--| |\n" +
-                "    | |--ASSISTINDO--| |\n" +
-                "    | |--.__.--.__.--| |\n" +
-                "    | |--.__.--.__.--| |\n" +
-                "    | '--------------'o|\n" +
-                "    | LI LI \"\"\"\"\"\"\"   o|\n" +
-                "    '=================='\n");
-    }
+    public static void printTv(String title, boolean isPaused, int elapsedTime, int totalTime) {
+        String status = isPaused ? "PAUSED" : "PLAYING";
+        String elapsedTimeFormatted = Formatter.formatTime(elapsedTime);
+        String totalTimeFormatted = Formatter.formatTime(totalTime);
 
-    /**
-     * Prints a drawing of a TV, with paused status
-     */
-    public static void printTvPaused() {
-        ConsoleMessage.println("               o\n" +
-                "          o    |\n" +
-                "           \\   |\n" +
-                "            \\  |\n" +
-                "             \\.|-.\n" +
-                "             (\\|  )\n" +
-                "    .==================.\n" +
-                "    | .--------------. |\n" +
-                "    | |--.__.--.__.--| |\n" +
-                "    | |--.__.--.__.--| |\n" +
-                "    | |--.-PAUSADO.--| |\n" +
-                "    | |--.__.--.__.--| |\n" +
-                "    | |--.__.--.__.--| |\n" +
-                "    | '--------------'o|\n" +
-                "    | LI LI \"\"\"\"\"\"\"   o|\n" +
-                "    '=================='\n");
+        String formattedStatusLine = Formatter.formatStatusLine(status);
+        String formattedTitle = Formatter.formatTitle(title);
+
+        System.out.println("┌──────────────────────────────────────────────────┐");
+        System.out.println("│                o                                 │");
+        System.out.println("│           o    |                                 │");
+        System.out.println("│            \\   |                                 │");
+        System.out.println("│             \\  |                                 │");
+        System.out.println("│              \\.|-                                │");
+        System.out.println("│              (\\|  )                              │");
+        System.out.println("│    .=========================================.   │");
+        System.out.println("│    | .-------------------------------------. |   │");
+        System.out.println("│    | |--.__.--.__.-------------------------| |   │");
+        System.out.println("│    | |--.__.--.__.-------------------------| |   │");
+        System.out.println("│    | |--.-" + formattedStatusLine + "---- --| |   │");
+        System.out.println("│    | |--.__.--.__.-------------------------| |   │");
+        System.out.println("│    | |--.__.--.__.-------------------------| |   │");
+        System.out.println("│    | '-------------------------------------'o|   │");
+        System.out.println("│    | " + formattedTitle + " │   │");
+        System.out.println("│    | " + elapsedTimeFormatted + " - " + totalTimeFormatted + "                     │   │");
+        System.out.println("│    |                                       │o|   │");
+        System.out.println("│    '========================================='   │");
+        System.out.println("│                                                  │");
+        System.out.println("└──────────────────────────────────────────────────┘");
     }
 }
