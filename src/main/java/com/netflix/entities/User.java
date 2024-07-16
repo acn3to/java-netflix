@@ -10,7 +10,7 @@ public class User {
     private String email;
     private String password;
     private boolean isAdmin;
-    private List<Profile> profiles; // ---------------------------------
+    private List<Profile> profiles;
     private List<String> watchedMovies;
 
     public User(int id, String name, String email, String password, boolean isAdmin) {
@@ -19,7 +19,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.isAdmin = isAdmin;
-        this.profiles = new ArrayList<>();  // ---------------------------------
+        this.profiles = new ArrayList<>();
         this.watchedMovies = new ArrayList<>();
     }
 
@@ -28,7 +28,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.isAdmin = false;
-        this.profiles = new ArrayList<>();  // ---------------------------------
+        this.profiles = new ArrayList<>();
     }
 
     public int getId() {
@@ -97,8 +97,6 @@ public class User {
                 "\nIs an administrator:" + isAdmin;
     }
 
-    // ---------------------------------
-
     public List<Profile> getProfiles() {
         return profiles;
     }
@@ -109,8 +107,8 @@ public class User {
         }
     }
 
-    public void removeProfile(int profileId) {
-        profiles.removeIf(profile -> profile.getId() == profileId);
+    public void removeProfile(Profile profile) {
+        profiles.remove(profile);
     }
 
     public Profile getProfileById(int id) {
