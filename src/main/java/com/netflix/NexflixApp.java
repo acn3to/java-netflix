@@ -5,19 +5,19 @@ import com.netflix.services.LoginService;
 import com.netflix.services.MediaService;
 import com.netflix.services.UserService;
 import com.netflix.utils.ConsoleMessage;
+import com.netflix.utils.Formatter;
 import com.netflix.utils.InputValidator;
 import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
 import org.fusesource.jansi.Ansi;
 
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class NexflixApp {
     private final LoginService loginService;
@@ -86,7 +86,6 @@ public class NexflixApp {
             displayMenuOptions();
         } catch (Exception e) {
             ConsoleMessage.println(e.getMessage(), Ansi.Color.RED);
-            aperteParaContinuar();
         }
     }
 
@@ -244,7 +243,6 @@ public class NexflixApp {
         if (tvShows.isEmpty()) {
             clearConsole();
             ConsoleMessage.println("\nNenhuma série encontrada.\n", Ansi.Color.RED);
-            aperteParaContinuar();
             return;
         }
 
@@ -296,11 +294,14 @@ public class NexflixApp {
         ConsoleMessage.println(media.getInformation());
 
         while (true) {
-            switch (InputValidator.getInteger(getMediaOptions())) {
+            int choice = InputValidator.getInteger(getMediaOptions());
+            switch (choice) {
                 case 1:
-                    if (media instanceof Movie) displayWatchingOptions();
-                    else displayTvShowSeasonsOptions((TvShow) media);
-
+                    if (media instanceof Movie) {
+                        displayWatchingOptions(media, null);
+                    } else if (media instanceof TvShow) {
+                        displayTvShowSeasonsOptions((TvShow) media);
+                    }
                     return;
                 case 2:
                     return;
@@ -323,43 +324,43 @@ public class NexflixApp {
      * @param tvShow The TV show for which to display seasons and episodes.
      */
     private void displayTvShowSeasonsOptions(TvShow tvShow) {
-        List<String> episodeList = new ArrayList<>();
+        List<Episode> episodeList;
         boolean selectingSeason = true;
 
         while (selectingSeason) {
-            clearConsole();
             ConsoleMessage.println("Escolha uma temporada:");
             tvShow.getSeasons().forEach((season, episodes) -> {
                 ConsoleMessage.println("[" + season + "] Temporada " + season);
             });
 
-            episodeList = tvShow.getSeasons().get(InputValidator.getInteger(""));
+            int seasonNumber = InputValidator.getInteger("Escolha o número da temporada:");
+
+            episodeList = tvShow.getSeasons().get(seasonNumber);
 
             if (episodeList == null) {
                 ConsoleMessage.printInvalidOptionMessage();
-                break;
             } else {
                 selectingSeason = false;
-            }
-        }
 
-        while (true) {
-            clearConsole();
-            ConsoleMessage.println("Escolha um episódio:");
-            for (int i = 0; i < episodeList.size(); i++) {
-                ConsoleMessage.println("[" + (i + 1) + "] " + episodeList.get(i));
-            }
+                while (true) {
+                    ConsoleMessage.println("Escolha um episódio:");
+                    for (int i = 0; i < episodeList.size(); i++) {
+                        ConsoleMessage.println("[" + (i + 1) + "] " + episodeList.get(i).getTitle());
+                    }
 
-            if (episodeList.get(InputValidator.getInteger("") - 1).isEmpty()) {
-                ConsoleMessage.printInvalidOptionMessage();
-                aperteParaContinuar();
-                break;
-            } else {
-                displayWatchingOptions();
-                return;
+                    int episodeNumber = InputValidator.getInteger("Escolha o número do episódio:") - 1;
+
+                    if (episodeNumber < 0 || episodeNumber >= episodeList.size()) {
+                        ConsoleMessage.printInvalidOptionMessage();
+                    } else {
+                        displayWatchingOptions(tvShow, episodeList.get(episodeNumber));
+                        return;
+                    }
+                }
             }
         }
     }
+
 
     /**
      * Displays options for watching a media item, such as a movie or TV show.
@@ -367,20 +368,51 @@ public class NexflixApp {
      * <p>
      * The method loops indefinitely until the user chooses to exit.
      * <p>
-     * Options include: <p>
-     * 1. Toggle between play and pause.<p>
+     * Options include:
+     * 1. Toggle between play and pause.
      * 2. Return to the previous menu.
+     *
+     * @param media   The selected media item (Movie or TvShow).
+     * @param episode The selected episode to watch (null if watching a movie).
      */
-    private void displayWatchingOptions() {
+    private void displayWatchingOptions(Media media, Episode episode) {
         boolean isPaused = false;
+        int startWatchingTime = (int) (System.currentTimeMillis() / 1000);
+        int pauseStartTime = 0;
+        int elapsedTime;
+        int totalTime = (episode != null) ? episode.getDuration() * 60 : ((media instanceof Movie) ? ((Movie) media).getDurationInMinutes() * 60 : 0);
 
         while (true) {
-            clearConsole();
-            if (isPaused) ConsoleMessage.printTvPaused();
-            else ConsoleMessage.printTvRunning();
+            elapsedTime = isPaused ? pauseStartTime - startWatchingTime : (int) (System.currentTimeMillis() / 1000) - startWatchingTime;
 
-            switch (InputValidator.getInteger(getMediaWatchingOptions(isPaused))) {
+            if (!isPaused && episode != null) {
+                if (elapsedTime >= totalTime) {
+                    ConsoleMessage.println("Fim do episódio.");
+                    return;
+                }
+                ConsoleMessage.printTv(Formatter.formatTitle(episode.getTitle()), isPaused, elapsedTime, totalTime);
+            } else if (!isPaused && media instanceof Movie) {
+                if (elapsedTime >= totalTime) {
+                    ConsoleMessage.println("Fim do filme.");
+                    return;
+                }
+                ConsoleMessage.printTv(Formatter.formatTitle(media.getTitle()), isPaused, elapsedTime, totalTime);
+            } else {
+                String title = (episode != null) ? episode.getTitle() : media.getTitle();
+                ConsoleMessage.printTv(Formatter.formatTitle(title), isPaused, elapsedTime, totalTime);
+            }
+
+            int choice = InputValidator.getInteger(getMediaWatchingOptions(isPaused));
+            switch (choice) {
                 case 1:
+                    if (isPaused) {
+                        int pauseEndTime = (int) (System.currentTimeMillis() / 1000);
+                        int pauseDuration = pauseEndTime - pauseStartTime;
+                        startWatchingTime += pauseDuration;
+                        pauseStartTime = 0;
+                    } else {
+                        pauseStartTime = (int) (System.currentTimeMillis() / 1000);
+                    }
                     isPaused = !isPaused;
                     break;
                 case 2:
@@ -388,6 +420,15 @@ public class NexflixApp {
                 default:
                     ConsoleMessage.printInvalidOptionMessage();
                     break;
+            }
+
+            elapsedTime = isPaused ? pauseStartTime - startWatchingTime : (int) (System.currentTimeMillis() / 1000) - startWatchingTime;
+            if (!isPaused && episode != null && elapsedTime >= totalTime) {
+                ConsoleMessage.println("Fim do episódio.");
+                return;
+            } else if (!isPaused && media instanceof Movie && elapsedTime >= totalTime) {
+                ConsoleMessage.println("Fim do filme.");
+                return;
             }
         }
     }
@@ -656,7 +697,6 @@ public class NexflixApp {
         displayMediaListOptions(mediaService.filterByRating(mediaList, minRating));
     }
 
-
     /**
      * Solicita ao usuário que selecione um diretor da lista mostrada e filtra a lista de itens de mídia por esse diretor.
      * Define a flag {@code hasFilters} como true.
@@ -677,7 +717,6 @@ public class NexflixApp {
             displayMediaListOptions(mediaFiltrada);
         }
     }
-
 
 
     private void displayTvShowCrudOptions() {
@@ -703,13 +742,9 @@ public class NexflixApp {
         }
     }
 
-    /**
-     * Handles the creation of a new TV show.
-     * Prompts the user to input TV show details and saves to the media service.
-     */
     private void handleCreateTvShow() {
         TvShow tvShow = new TvShow();
-        clearConsole();
+
         tvShow.setTitle(InputValidator.getString("Insira o título da série:"));
         tvShow.setDescription(InputValidator.getString("Insira a descrição da série:"));
         tvShow.setDirector(InputValidator.getString("Insira o diretor da série:"));
@@ -717,8 +752,23 @@ public class NexflixApp {
         tvShow.setCategory(InputValidator.getCategory("Insira a categoria da série:"));
         tvShow.setRating(InputValidator.getDouble("Insira a nota de avaliação da série:"));
 
-        // TODO: creation of seasons
+        Map<Integer, List<Episode>> seasons = new HashMap<>();
 
+        int numberOfSeasons = InputValidator.getInteger("Insira o número de temporadas:");
+        for (int i = 1; i <= numberOfSeasons; i++) {
+            List<Episode> episodes = new ArrayList<>();
+            int numberOfEpisodes = InputValidator.getInteger("Insira o número de episódios para a temporada " + i + ":");
+
+            for (int j = 1; j <= numberOfEpisodes; j++) {
+                String episodeTitle = InputValidator.getString("Insira o título do episódio " + j + " da temporada " + i + ":");
+                int duration = InputValidator.getInteger("Insira a duração do episódio " + j + " da temporada " + i + " em minutos:");
+                episodes.add(new Episode(episodeTitle, duration));
+            }
+
+            seasons.put(i, episodes);
+        }
+
+        tvShow.setSeasons(seasons);
         mediaService.addMedia(tvShow);
 
         ConsoleMessage.println("Série cadastrada com sucesso!", Ansi.Color.GREEN);
@@ -735,7 +785,6 @@ public class NexflixApp {
         if (tvShows.isEmpty()) {
             clearConsole();
             ConsoleMessage.println("\nNenhuma série encontrada.\n", Ansi.Color.RED);
-            aperteParaContinuar();
             return;
         }
 
@@ -781,7 +830,6 @@ public class NexflixApp {
         if (tvShows.isEmpty()) {
             clearConsole();
             ConsoleMessage.println("\nNenhuma série encontrada.\n", Ansi.Color.RED);
-            aperteParaContinuar();
             return;
         }
 
@@ -858,7 +906,6 @@ public class NexflixApp {
         if (movies.isEmpty()) {
             clearConsole();
             ConsoleMessage.println("\nNenhum filme encontrado.\n", Ansi.Color.RED);
-            aperteParaContinuar();
             return;
         }
 
@@ -904,7 +951,6 @@ public class NexflixApp {
         if (movies.isEmpty()) {
             clearConsole();
             ConsoleMessage.println("\nNenhum filme encontrado.\n", Ansi.Color.RED);
-            aperteParaContinuar();
             return;
         }
 
@@ -1052,7 +1098,7 @@ public class NexflixApp {
      * @return Formatted string of media watching options.
      */
     private String getMediaWatchingOptions(boolean isPaused) {
-        return "[1] " + (isPaused ? "Despausar" : "Pausar") + "\n[2] Sair";
+        return "[1] " + (isPaused ? "Play" : "Pause") + "\n[2] Exit";
     }
 
     /**
@@ -1070,11 +1116,6 @@ public class NexflixApp {
             System.out.println();
         }
     }
-    public static void aperteParaContinuar() {
-        System.out.println("Pressione para continuar...");
-        scanner.next();
-    }
-
 
     private String getFilterOptions() {
         return "[1] Ordenar por data de lançamento (decrescente)" +

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MediaService {
-    private MediaRepository mediaRepository;
+    private final MediaRepository mediaRepository;
 
     public MediaService(MediaRepository mediaRepository) {
         this.mediaRepository = mediaRepository;
@@ -101,5 +101,4 @@ public class MediaService {
                 .filter(media -> media.getDirector().equalsIgnoreCase(director))
                 .collect(Collectors.toList());
     }
-
 }
