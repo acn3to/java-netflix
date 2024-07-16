@@ -85,7 +85,7 @@ public class UserService {
             throw new Exception("Perfil não encontrado.");
         }
         profile.addToMyList(media);
-        userRepository.update(user);  // Atualizar o perfil no repositório
+        userRepository.update(user);
     }
 
     public void removeFromProfileMyList(int userId, int profileId, Media media) throws Exception {
@@ -95,7 +95,17 @@ public class UserService {
             throw new Exception("Perfil não encontrado.");
         }
         profile.removeFromMyList(media);
-        userRepository.update(user);  // Atualizar o perfil no repositório
+        userRepository.update(user);
+    }
+
+    public void removeProfile(int userId, int profileId) throws Exception {
+        User user = userRepository.findById(userId);
+        Profile profile = getProfileById(userId, profileId);
+        if (profile == null) {
+            throw new Exception("Perfil não encontrado.");
+        }
+        user.removeProfile(profile);
+        userRepository.update(user);
     }
 
     public List<Media> getProfileMyList(int userId, int profileId) throws Exception {
